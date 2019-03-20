@@ -2,22 +2,14 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const { ApolloServer, gql } = require("apollo-server");
 const typeDefs = require("./graphql/types");
-
-// A map of functions which return data for the schema.
-const resolvers = {
-  Query: {
-    hello: () =>
-      fetch("https://fourtonfish.com/hellosalut/?mode=auto")
-        .then(res => res.json())
-        .then(data => data.hello)
-  }
-};
+const Query = require("./graphql/resolvers/queries");
 
 const server = new ApolloServer({
   typeDefs,
-  resolvers,
+  resolvers: {
+    Query
+  },
   mocks: true,
-  onHealthCheck: () => fetch("https://fourtonfish.com/hellosalut/?mode=auto")
 });
 
 mongoose

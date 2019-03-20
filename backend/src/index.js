@@ -9,7 +9,7 @@ const server = new ApolloServer({
   resolvers: {
     Query
   },
-  mocks: true,
+  mocks: false
 });
 
 mongoose

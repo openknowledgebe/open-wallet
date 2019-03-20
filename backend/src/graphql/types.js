@@ -4,6 +4,9 @@ module.exports = gql`
   type Query {
     getUsers: [User]!
   }
+  type Mutation {
+    register(firstName: String!, lastName: String!, email: String!, password: String!): User
+  }
   type Address {
     street: String!
     city: String!

@@ -1,4 +1,6 @@
-const { ApolloServer, gql } = require('apollo-server');
+require("dotenv").config();
+
+const { ApolloServer, gql } = require("apollo-server");
 
 // The GraphQL schema
 const typeDefs = gql`
@@ -12,17 +14,17 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     hello: () =>
-      fetch('https://fourtonfish.com/hellosalut/?mode=auto')
+      fetch("https://fourtonfish.com/hellosalut/?mode=auto")
         .then(res => res.json())
-        .then(data => data.hello),
-  },
+        .then(data => data.hello)
+  }
 };
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   mocks: true,
-  onHealthCheck: () => fetch('https://fourtonfish.com/hellosalut/?mode=auto'),
+  onHealthCheck: () => fetch("https://fourtonfish.com/hellosalut/?mode=auto")
 });
 
 server.listen().then(({ url }) => {

@@ -13,7 +13,7 @@ const userSchema = new Schema({
     unique: true
   },
   address: Address,
-  bank_details: BankDetails
+  bankDetails: BankDetails
 });
 
 module.exports = mongoose.model("User", userSchema);

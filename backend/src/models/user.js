@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+const Address = require("./address");
+const BankDetails = require("./bankDetails");
+
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({

@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 const { ApolloServer, gql } = require("apollo-server");
 const typeDefs = require("./graphql/types");
 const Query = require("./graphql/resolvers/queries");
+const Mutation = require("./graphql/resolvers/mutations");
 
 const server = new ApolloServer({
   typeDefs,
   resolvers: {
-    Query
+    Query,
+    Mutation
   },
   mocks: false
 });

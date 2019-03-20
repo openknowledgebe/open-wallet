@@ -1,14 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const { ApolloServer, gql } = require("apollo-server");
-
-// The GraphQL schema
-const typeDefs = gql`
-  type Query {
-    hello: String
-    mockedString: String
-  }
-`;
+const typeDefs = require("./graphql/types");
 
 // A map of functions which return data for the schema.
 const resolvers = {

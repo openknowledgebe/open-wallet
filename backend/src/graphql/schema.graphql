@@ -4,3 +4,8 @@ type Address {
   country: String!
   zipCode: Int!
 }
+
+type BankDetails {
+    iban: String!,
+    bic: String
+}

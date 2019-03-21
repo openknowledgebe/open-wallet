@@ -6,7 +6,7 @@ module.exports = {
   users: async () => {
     return (users = await User.find());
   },
-  login: async (_, { email, password }, ctx) => {
+  login: async (_, { email, password }, { res }) => {
     // lowerCase the email && check if the user exists
     const user = await User.findOne({ email: email.toLowerCase() });
     // compare provided password against stored password
@@ -19,7 +19,11 @@ module.exports = {
     }
     // generate JWT
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
-    // TODO set cookie
+    // set cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 1000
+    });
     // return the user
     return user;
   }

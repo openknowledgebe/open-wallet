@@ -39,4 +39,24 @@ module.exports = gql`
   }
 
   #inputs
+  input AdressInput {
+    street: String!
+    city: String!
+    country: String!
+    zipCode: Int!
+  }
+
+  input BankDetailsInput {
+    iban: String!
+    bic: String
+  }
+
+  input UserInput {
+    firstName: String!
+    lastName: String!
+    password: String!
+    email: String!
+    bankDetails: BankDetailsInput
+    address: AdressInput
+  }
 `;

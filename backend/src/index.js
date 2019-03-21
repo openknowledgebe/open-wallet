@@ -18,6 +18,9 @@ const server = new ApolloServer({
     Query,
     Mutation
   },
+  context: ({ req, res }) => {
+    return { req, res };
+  },
   mocks: false
 });
 

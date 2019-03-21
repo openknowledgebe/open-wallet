@@ -25,7 +25,6 @@ module.exports = gql`
     id: ID!
     firstName: String!
     lastName: String!
-    password: String
     email: String!
     bankDetails: BankDetails
     address: Address

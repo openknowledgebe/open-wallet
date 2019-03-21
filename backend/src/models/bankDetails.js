@@ -5,7 +5,7 @@ const bankDetailsSchema = new Schema(
   {
     iban: {
       type: String,
-      unique: true
+      sparse: true
     },
     bic: String
   },

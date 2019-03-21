@@ -4,7 +4,7 @@ module.exports = gql`
   # types
 
   type Query {
-    getUsers: [User]!
+    users: [User]!
   }
   type Mutation {
     register(user: UserInput!): User!

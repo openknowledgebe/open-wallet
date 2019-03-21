@@ -7,7 +7,7 @@ module.exports = gql`
     getUsers: [User]!
   }
   type Mutation {
-    register(user: UserInput!): User
+    register(user: UserInput!): User!
   }
   type Address {
     street: String!

@@ -1,9 +1,16 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const { ApolloServer } = require("apollo-server");
+const express = require("express");
+const { ApolloServer } = require("apollo-server-express");
+const cookieParser = require("cookie-parser");
+
 const typeDefs = require("./graphql/types");
 const Query = require("./graphql/resolvers/queries");
 const Mutation = require("./graphql/resolvers/mutations");
+
+const PORT = 4000;
+
+const app = express(cookieParser());
 
 const server = new ApolloServer({
   typeDefs,
@@ -13,6 +20,8 @@ const server = new ApolloServer({
   },
   mocks: false
 });
+
+server.applyMiddleware({ app });
 
 mongoose
   .connect(process.env.MONGODB_URI, {
@@ -24,6 +33,6 @@ mongoose
     console.log(`DB connection failed: ${err}`);
   });
 
-server.listen().then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+app.listen({ port: PORT }, () =>
+  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+);

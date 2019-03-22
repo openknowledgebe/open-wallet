@@ -27,5 +27,9 @@ module.exports = {
     // return the user
     return user;
   },
-  me: (_, args, { user }) => user
+  me: (_, args, { user }) => user,
+  logout: (_, args, { res }) => {
+    res.clearCookie("token");
+    return "Successfully logged out";
+  }
 };

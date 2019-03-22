@@ -26,5 +26,6 @@ module.exports = {
     });
     // return the user
     return user;
-  }
+  },
+  me: (_, args, { user }) => user
 };

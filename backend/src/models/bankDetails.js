@@ -3,10 +3,7 @@ const Schema = mongoose.Schema;
 
 const bankDetailsSchema = new Schema(
   {
-    iban: {
-      type: String,
-      sparse: true
-    },
+    iban: String,
     bic: String
   },
   { _id: false }

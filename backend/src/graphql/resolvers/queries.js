@@ -30,6 +30,6 @@ module.exports = {
   me: (_, args, { user }) => user,
   logout: (_, args, { res }) => {
     res.clearCookie("token");
-    return "Successfully logged out";
+    return { message: "Successfully logged out" };
   }
 };

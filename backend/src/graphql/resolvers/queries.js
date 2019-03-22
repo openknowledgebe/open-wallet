@@ -22,7 +22,7 @@ module.exports = {
     // set cookie
     res.cookie("token", token, {
       httpOnly: true,
-      maxAge: 60 * 60 * 24 * 1000
+      maxAge: 60 * 60 * 24 * 1000 // 1d
     });
     // return the user
     return user;

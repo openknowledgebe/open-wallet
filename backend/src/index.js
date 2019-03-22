@@ -3,14 +3,17 @@ const mongoose = require("mongoose");
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 const typeDefs = require("./graphql/types");
 const Query = require("./graphql/resolvers/queries");
 const Mutation = require("./graphql/resolvers/mutations");
+const User = require("./models/user");
 
 const PORT = 4000;
 
-const app = express(cookieParser());
+const app = express();
+app.use(cookieParser());
 
 const server = new ApolloServer({
   typeDefs,
@@ -18,8 +21,19 @@ const server = new ApolloServer({
     Query,
     Mutation
   },
-  context: ({ req, res }) => {
-    return { req, res };
+  context: async ({ req, res }) => {
+    // Get the token
+    const { token } = req.cookies;
+    let user = null;
+    if (token) {
+      // Verify the token
+      const { userId } = jwt.verify(token, process.env.APP_SECRET);
+      // Get the user
+      if (userId) {
+        user = await User.findById(userId);
+      }
+    }
+    return { req, res, user };
   },
   mocks: false
 });

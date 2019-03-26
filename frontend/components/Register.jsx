@@ -17,7 +17,12 @@ const Register = () => {
         <InputGroup large type="password" id="reg-password" placeholder="Your password" />
       </FormGroup>
       <FormGroup label="Password Repeat" labelFor="reg-password-repeat">
-        <InputGroup large type="password" id="reg-password-repeat" placeholder="Your password" />
+        <InputGroup
+          large
+          type="password"
+          id="reg-password-repeat"
+          placeholder="Your password a second time"
+        />
       </FormGroup>
       <Button large type="submit" intent={Intent.PRIMARY}>
         Sign up

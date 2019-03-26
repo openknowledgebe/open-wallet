@@ -1,10 +1,13 @@
+import FormContainer from '../components/FormContainer';
 import Login from '../components/Login';
 
 function Home() {
   return (
     <div>
       Welcome to Next.js!
-      <Login />
+      <FormContainer>
+        <Login />
+      </FormContainer>
     </div>
   );
 }

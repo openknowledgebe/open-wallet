@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Address = require('./address');
 const BankDetails = require('./bankDetails');
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const userSchema = new Schema({
   firstName: String,

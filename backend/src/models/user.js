@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const Address = require("./address");
-const BankDetails = require("./bankDetails");
+const mongoose = require('mongoose');
+const Address = require('./address');
+const BankDetails = require('./bankDetails');
 
 const Schema = mongoose.Schema;
 
@@ -13,4 +13,4 @@ const userSchema = new Schema({
   bankDetails: BankDetails
 });
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model('User', userSchema);

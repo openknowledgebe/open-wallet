@@ -1,5 +1,5 @@
-const bcrypt = require("bcrypt");
-const User = require("../../models/user");
+const bcrypt = require('bcrypt');
+const User = require('../../models/user');
 
 module.exports = {
   register: async (_, { user }) => {
@@ -10,7 +10,7 @@ module.exports = {
     // Make sure any user has the email
     const dupUser = await User.findOne({ email });
     if (dupUser) {
-      throw new Error("An account with that email address already exists.");
+      throw new Error('An account with that email address already exists.');
     }
     // Hash Password
     const password = await bcrypt.hash(user.password, 10);

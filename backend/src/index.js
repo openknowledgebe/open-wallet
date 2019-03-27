@@ -1,14 +1,14 @@
-require("dotenv").config();
-const mongoose = require("mongoose");
-const express = require("express");
-const { ApolloServer } = require("apollo-server-express");
-const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
+require('dotenv').config();
+const mongoose = require('mongoose');
+const express = require('express');
+const { ApolloServer } = require('apollo-server-express');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 
-const typeDefs = require("./graphql/types");
-const Query = require("./graphql/resolvers/queries");
-const Mutation = require("./graphql/resolvers/mutations");
-const User = require("./models/user");
+const typeDefs = require('./graphql/types');
+const Query = require('./graphql/resolvers/queries');
+const Mutation = require('./graphql/resolvers/mutations');
+const User = require('./models/user');
 
 const PORT = 4000;
 
@@ -45,11 +45,9 @@ mongoose
     dbName: process.env.DB_NAME,
     useNewUrlParser: true
   })
-  .then(() => console.log("DB connected successfully!"))
-  .catch(err => {
+  .then(() => console.log('DB connected successfully!'))
+  .catch((err) => {
     console.log(`DB connection failed: ${err}`);
   });
 
-app.listen({ port: PORT }, () =>
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-);
+app.listen({ port: PORT }, () => console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`));

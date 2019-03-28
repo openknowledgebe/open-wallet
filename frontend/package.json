@@ -12,10 +12,12 @@
   "license": "ISC",
   "dependencies": {
     "@blueprintjs/core": "^3.14.1",
+    "@blueprintjs/icons": "^3.6.0",
     "apollo-boost": "^0.3.1",
     "graphql": "^14.1.1",
     "next": "^8.0.3",
     "next-with-apollo": "^3.4.0",
+    "normalize.css": "^8.0.1",
     "react": "^16.8.4",
     "react-apollo": "^2.5.3",
     "react-dom": "^16.8.4",

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FormGroup, InputGroup, Button, Intent } from '@blueprintjs/core';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
+import useFormInput from './hooks/useFormInput';
 
 const LOG_ME_IN = gql`
   mutation Login($email: String!, $password: String!) {
@@ -11,19 +12,6 @@ const LOG_ME_IN = gql`
     }
   }
 `;
-
-const useFormInput = initVal => {
-  const [value, setValue] = useState(initVal);
-
-  function handleChange(e) {
-    setValue(e.target.value);
-  }
-
-  return {
-    value,
-    onChange: handleChange
-  };
-};
 
 const Login = () => {
   const email = useFormInput('');

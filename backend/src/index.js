@@ -4,6 +4,7 @@ const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+var cors = require("cors");
 
 const typeDefs = require("./graphql/types");
 const Query = require("./graphql/resolvers/queries");
@@ -14,6 +15,7 @@ const PORT = 4000;
 
 const app = express();
 app.use(cookieParser());
+app.use(cors());
 
 const server = new ApolloServer({
   typeDefs,

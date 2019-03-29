@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 require('dotenv').config();
 const mongoose = require('mongoose');
 const express = require('express');
@@ -46,8 +47,10 @@ mongoose
     useNewUrlParser: true
   })
   .then(() => console.log('DB connected successfully!'))
-  .catch((err) => {
+  .catch(err => {
     console.log(`DB connection failed: ${err}`);
   });
 
-app.listen({ port: PORT }, () => console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`));
+app.listen({ port: PORT }, () =>
+  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+);

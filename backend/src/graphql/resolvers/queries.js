@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../../models/user');
 
 module.exports = {
-  users: async () => (users = await User.find()),
+  users: async () => User.find(),
   login: async (_, { email, password }, { res }) => {
     // lowerCase the email && check if the user exists
     const user = await User.findOne({ email: email.toLowerCase() });

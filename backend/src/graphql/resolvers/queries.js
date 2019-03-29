@@ -1,5 +1,5 @@
 const User = require('../../models/user');
-const { attemptLogin } = require('../../auth');
+const { attemptLogin, attemptLogout } = require('../../auth');
 
 module.exports = {
   users: async () => User.find(),
@@ -8,7 +8,6 @@ module.exports = {
   },
   me: (_, args, { user }) => user,
   logout: (_, args, { res }) => {
-    res.clearCookie('token');
-    return { message: 'Successfully logged out' };
+    return attemptLogout(res);
   }
 };

@@ -41,7 +41,7 @@ const attemptLogin = async (email, password, res) => {
 
 const attemptLogout = async res => {
   res.clearCookie('token');
-  return { status: true };
+  return true;
 };
 
 module.exports = { loggedUser, attemptLogin, attemptLogout };

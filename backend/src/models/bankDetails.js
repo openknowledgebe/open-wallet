@@ -4,8 +4,14 @@ const { Schema } = mongoose;
 
 const bankDetailsSchema = new Schema(
   {
-    iban: String,
-    bic: String
+    iban: {
+      type: String,
+      trim: true
+    },
+    bic: {
+      type: String,
+      trim: true
+    }
   },
   { _id: false }
 );

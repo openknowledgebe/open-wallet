@@ -4,9 +4,18 @@ const { Schema } = mongoose;
 
 const addressSchema = new Schema(
   {
-    street: String,
-    city: String,
-    country: String,
+    street: {
+      type: String,
+      trim: true
+    },
+    city: {
+      type: String,
+      trim: true
+    },
+    country: {
+      type: String,
+      trim: true
+    },
     zipCode: Number
   },
   { _id: false }

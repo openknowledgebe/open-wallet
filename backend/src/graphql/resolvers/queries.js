@@ -1,18 +1,13 @@
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../../models/user');
 
 module.exports = {
   users: async () => User.find(),
   login: async (_, { email, password }, { res }) => {
-    // lowerCase the email && check if the user exists
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findByEmail(email);
     // compare provided password against stored password
-    let rightPassword = false;
-    if (user) {
-      rightPassword = await bcrypt.compare(password, user.password);
-    }
-    if (!user || !rightPassword) {
+    const isCorrect = user && (await new User(user).rightPassword(password));
+    if (!isCorrect) {
       throw new Error('Email or password incorrect.');
     }
     // generate JWT

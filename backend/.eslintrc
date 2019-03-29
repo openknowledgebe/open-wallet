@@ -1,10 +1,11 @@
 {
-  "extends": "airbnb",
+  "extends": ["airbnb", "prettier"],
   "parser": "babel-eslint",
   "env": {
     "node": true
   },
   "rules": {
+    "prettier/prettier": "error",
     "comma-dangle": ["error", "never"],
     "no-underscore-dangle": 0,
     "no-console": "warn",

@@ -5,8 +5,7 @@ const BankDetails = require('./bankDetails');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-  firstName: String,
-  lastName: String,
+  name: String,
   password: String,
   email: String,
   address: Address,

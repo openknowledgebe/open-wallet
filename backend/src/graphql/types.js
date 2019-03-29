@@ -29,8 +29,7 @@ module.exports = gql`
 
   type User {
     id: ID!
-    firstName: String!
-    lastName: String!
+    name: String!
     email: String!
     bankDetails: BankDetails
     address: Address
@@ -50,8 +49,7 @@ module.exports = gql`
   }
 
   input UserInput {
-    firstName: String!
-    lastName: String!
+    name: String!
     password: String!
     email: String!
     bankDetails: BankDetailsInput

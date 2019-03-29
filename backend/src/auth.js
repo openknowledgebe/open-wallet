@@ -15,10 +15,28 @@ const loggedUser = async ({ token }) => {
     // Verify the token
     const { userId } = jwt.verify(token, APP_SECRET);
     // Get the user
-    if (userId) {
-      return User.findById(userId);
-    }
+    return userId && User.findById(userId);
   }
+  return null;
 };
 
-module.exports = { loggedUser };
+const attemptLogin = async (email, password, res) => {
+  const message = 'Incorrect email or password. Please try again.';
+
+  const user = await User.findByEmail(email);
+  // compare provided password against stored password
+  const isCorrect = user && (await new User(user).rightPassword(password));
+  if (!isCorrect) {
+    throw new AuthenticationError(message);
+  }
+  // generate JWT
+  const token = jwt.sign({ userId: user.id }, APP_SECRET);
+  // set cookie
+  res.cookie('token', token, {
+    httpOnly: true,
+    maxAge: 60 * 60 * 24 * 1000 // 1d TODO to put inside .env or config
+  });
+  return user;
+};
+
+module.exports = { loggedUser, attemptLogin };

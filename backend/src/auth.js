@@ -20,6 +20,14 @@ const loggedUser = async ({ token }) => {
   return null;
 };
 
+/**
+ * Handle login attempts, set the cookie and return the user.
+ *
+ * @param {string} email - email provided by the user
+ * @param {string} password - password provided by the user
+ * @param {object} res - HTTP response
+ * @return User
+ */
 const attemptLogin = async (email, password, res) => {
   const message = 'Incorrect email or password. Please try again.';
 
@@ -39,6 +47,11 @@ const attemptLogin = async (email, password, res) => {
   return user;
 };
 
+/**
+ * Clear the the cookie and return true
+ * @param {*} res - HTTP response
+ * @return true
+ */
 const attemptLogout = async res => {
   res.clearCookie('token');
   return true;

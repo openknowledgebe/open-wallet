@@ -32,6 +32,7 @@ userSchema.pre('save', async function() {
     throw new Error('Email already exists!');
   }
   if (this.isModified('password')) {
+    // TODO Retrieve hash féacotor from env
     this.password = await bcrypt.hash(this.password, 10);
   }
 });

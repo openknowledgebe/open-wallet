@@ -5,10 +5,10 @@ const User = require('./models/user');
 const { APP_SECRET } = process.env;
 
 /**
- * Retrieve the cookie and return the bearer data.
+ * Retrieves the cookie and returns the bearer data.
  *
  * @param {object} req - HTTP request
- * @return User
+ * @returns {Promise} Promise object represents the user
  */
 const loggedUser = async ({ token }) => {
   if (token) {
@@ -21,12 +21,40 @@ const loggedUser = async ({ token }) => {
 };
 
 /**
- * Handle login attempts, set the cookie and return the user.
+ * Returns whether a user is logged in or not.
+ * @param { User } user - logged in user
+ * @returns {boolean} True of false
+ */
+const loggedIn = ({ user }) => !!user;
+
+/**
+ * Ensures that a user is logged in.
+ * @param {object} ctx - Application context
+ */
+const ensureLoggedIn = ctx => {
+  if (!loggedIn(ctx)) {
+    throw new AuthenticationError('You must be logged in.');
+  }
+};
+
+/**
+ * Ensures that a user is logged out.
+ * @param {object} ctx - Application context
+ */
+const ensureLoggedOut = ctx => {
+  if (loggedIn(ctx)) {
+    throw new AuthenticationError('You must be logged out.');
+  }
+};
+
+/**
+ * Handles login attempts, sets the cookie and returns the user.
  *
  * @param {string} email - email provided by the user
  * @param {string} password - password provided by the user
  * @param {object} res - HTTP response
- * @return User
+ * @return {object} User
+ * @throws {AuthenticationError}
  */
 const attemptLogin = async (email, password, res) => {
   const message = 'Incorrect email or password. Please try again.';
@@ -48,13 +76,13 @@ const attemptLogin = async (email, password, res) => {
 };
 
 /**
- * Clear the the cookie and return true
+ * Clears the cookie and returns true
  * @param {*} res - HTTP response
- * @return true
+ * @returns {boolean} Always true
  */
 const attemptLogout = async res => {
   res.clearCookie('token');
   return true;
 };
 
-module.exports = { loggedUser, attemptLogin, attemptLogout };
+module.exports = { loggedUser, attemptLogin, attemptLogout, ensureLoggedIn, ensureLoggedOut };

@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const typeDefs = require('./graphql/types');
 const Query = require('./graphql/resolvers/queries');
 const Mutation = require('./graphql/resolvers/mutations');
+const schemaDirectives = require('./graphql/directives');
 
 const { loggedUser } = require('./auth');
 
@@ -22,8 +23,9 @@ const server = new ApolloServer({
     Query,
     Mutation
   },
+  schemaDirectives,
   context: async ({ req, res }) => {
-    const user = await loggedUser(req);
+    const user = await loggedUser(req.cookies);
     return { req, res, user };
   },
   mocks: false

@@ -1,16 +1,17 @@
 const { gql } = require('apollo-server-express');
 
 module.exports = gql`
+  directive @guest on FIELD_DEFINITION
   # types
 
   type Query {
     users: [User]!
     me: User
     logout: Boolean!
-    login(email: String!, password: String!): User!
+    login(email: String!, password: String!): User! @guest
   }
   type Mutation {
-    register(user: UserInput!): User!
+    register(user: UserInput!): User! @guest
   }
   type Success {
     status: Boolean!

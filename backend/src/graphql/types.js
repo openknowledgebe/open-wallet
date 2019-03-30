@@ -2,11 +2,12 @@ const { gql } = require('apollo-server-express');
 
 module.exports = gql`
   directive @guest on FIELD_DEFINITION
+  directive @auth on FIELD_DEFINITION
   # types
 
   type Query {
-    users: [User]!
-    me: User
+    users: [User]! @auth
+    me: User @auth
     logout: Boolean!
     login(email: String!, password: String!): User! @guest
   }

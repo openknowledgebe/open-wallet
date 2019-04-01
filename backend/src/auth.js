@@ -1,7 +1,7 @@
 const { AuthenticationError } = require('apollo-server-express');
 const jwt = require('jsonwebtoken');
 
-const { APP_SECRET } = process.env;
+const { APP_SECRET = 'mysecret' } = process.env;
 
 const { MUST_LOGIN, MUST_LOGOUT, WRONG_EMAIL_PASSWORD } = require('./messages');
 
@@ -15,9 +15,13 @@ const { MUST_LOGIN, MUST_LOGOUT, WRONG_EMAIL_PASSWORD } = require('./messages');
 const loggedUser = async ({ token }, { User }) => {
   if (token) {
     // Verify the token
-    const { userId } = jwt.verify(token, APP_SECRET);
-    // Get the user
-    return userId && User.findById(userId);
+    try {
+      const { userId } = jwt.verify(token, APP_SECRET);
+      // Get the user
+      return userId && User.findById(userId);
+    } catch (e) {
+      return null;
+    }
   }
   return null;
 };

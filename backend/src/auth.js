@@ -1,6 +1,5 @@
 const { AuthenticationError } = require('apollo-server-express');
 const jwt = require('jsonwebtoken');
-const User = require('./models/user');
 
 const { APP_SECRET } = process.env;
 
@@ -8,9 +7,10 @@ const { APP_SECRET } = process.env;
  * Retrieves the cookie and returns the bearer data.
  *
  * @param {object} req - HTTP request
+ * @param {object} models - Models provider, must have a User model
  * @returns {Promise} Promise object represents the user
  */
-const loggedUser = async ({ token }) => {
+const loggedUser = async ({ token }, { User }) => {
   if (token) {
     // Verify the token
     const { userId } = jwt.verify(token, APP_SECRET);
@@ -22,7 +22,7 @@ const loggedUser = async ({ token }) => {
 
 /**
  * Returns whether a user is logged in or not.
- * @param { User } user - logged in user
+ * @param { object } user - logged in user
  * @returns {boolean} True of false
  */
 const loggedIn = ({ user }) => !!user;
@@ -53,10 +53,11 @@ const ensureLoggedOut = ctx => {
  * @param {string} email - email provided by the user
  * @param {string} password - password provided by the user
  * @param {object} res - HTTP response
+ * @param {User} User - User model
  * @return {object} User
  * @throws {AuthenticationError}
  */
-const attemptLogin = async (email, password, res) => {
+const attemptLogin = async (email, password, res, User) => {
   const message = 'Incorrect email or password. Please try again.';
 
   const user = await User.findByEmail(email);
@@ -76,7 +77,7 @@ const attemptLogin = async (email, password, res) => {
 };
 
 /**
- * Clears the cookie and returns true
+ * Clears the cookie and returns true.
  * @param {*} res - HTTP response
  * @returns {boolean} Always true
  */

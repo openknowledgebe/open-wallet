@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 require('dotenv').config();
-const mongoose = require('mongoose');
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const cookieParser = require('cookie-parser');
@@ -10,7 +9,9 @@ const Query = require('./graphql/resolvers/queries');
 const Mutation = require('./graphql/resolvers/mutations');
 const schemaDirectives = require('./graphql/directives');
 
-const { loggedUser } = require('./auth');
+const models = require('./models');
+const db = require('./db');
+const auth = require('./auth');
 
 const PORT = process.env.PORT || 4000;
 
@@ -25,23 +26,16 @@ const server = new ApolloServer({
   },
   schemaDirectives,
   context: async ({ req, res }) => {
-    const user = await loggedUser(req.cookies);
-    return { req, res, user };
+    const user = await auth.loggedUser(req.cookies, models);
+    // adopting injection pattern to ease mocking
+    return { req, res, user, auth, models };
   },
   mocks: false
 });
 
 server.applyMiddleware({ app });
 
-mongoose
-  .connect(process.env.MONGODB_URI, {
-    dbName: process.env.DB_NAME,
-    useNewUrlParser: true
-  })
-  .then(() => console.log('DB connected successfully!'))
-  .catch(err => {
-    console.log(`DB connection failed: ${err}`);
-  });
+db.connect();
 
 app.listen({ port: PORT }, () =>
   console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)

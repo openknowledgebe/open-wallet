@@ -33,10 +33,28 @@ const server = new ApolloServer({
   mocks: false
 });
 
-server.applyMiddleware({ app });
+if (process.env.NODE_ENV !== 'test') {
+  // only start if not in test env
+  // see test folder for test server config
+  server.applyMiddleware({ app });
+  db.connect();
 
-db.connect();
+  app.listen({ port: PORT }, () =>
+    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+  );
+}
 
-app.listen({ port: PORT }, () =>
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-);
+module.exports = {
+  models,
+  typeDefs,
+  // TODO exports resolvers in their on folder via index
+  resolvers: {
+    Query,
+    Mutation
+  },
+  schemaDirectives,
+  db,
+  auth,
+  server,
+  app
+};

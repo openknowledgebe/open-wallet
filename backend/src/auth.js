@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 
 const { APP_SECRET } = process.env;
 
+const { MUST_LOGIN, MUST_LOGOUT, WRONG_EMAIL_PASSWORD } = require('./messages');
+
 /**
  * Retrieves the cookie and returns the bearer data.
  *
@@ -33,7 +35,7 @@ const loggedIn = ({ user }) => !!user;
  */
 const ensureLoggedIn = ctx => {
   if (!loggedIn(ctx)) {
-    throw new AuthenticationError('You must be logged in.');
+    throw new AuthenticationError(MUST_LOGIN);
   }
 };
 
@@ -43,7 +45,7 @@ const ensureLoggedIn = ctx => {
  */
 const ensureLoggedOut = ctx => {
   if (loggedIn(ctx)) {
-    throw new AuthenticationError('You must be logged out.');
+    throw new AuthenticationError(MUST_LOGOUT);
   }
 };
 
@@ -58,13 +60,11 @@ const ensureLoggedOut = ctx => {
  * @throws {AuthenticationError}
  */
 const attemptLogin = async (email, password, res, User) => {
-  const message = 'Incorrect email or password. Please try again.';
-
   const user = await User.findByEmail(email);
   // compare provided password against stored password
   const isCorrect = user && (await new User(user).rightPassword(password));
   if (!isCorrect) {
-    throw new AuthenticationError(message);
+    throw new AuthenticationError(WRONG_EMAIL_PASSWORD);
   }
   // generate JWT
   const token = jwt.sign({ userId: user.id }, APP_SECRET);

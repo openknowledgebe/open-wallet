@@ -11,3 +11,5 @@ module.exports.connect = async () => {
       console.log(`DB connection failed: ${err}`);
     });
 };
+
+module.exports.disconnect = mongoose.disconnect();

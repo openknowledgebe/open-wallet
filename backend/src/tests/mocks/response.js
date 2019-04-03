@@ -3,8 +3,8 @@ class Response {
     this.cookies = {};
   }
 
-  cookie(name, payload, options) {
-    this.cookies[name] = { payload, options };
+  cookie(name, payload) {
+    this.cookies[name] = payload;
   }
 
   clearCookie(name) {

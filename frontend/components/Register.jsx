@@ -9,7 +9,7 @@ const REGISTER_ME = gql`
   mutation REGISTER($user: UserInput!) {
     register(user: $user) {
       id
-      firstName
+      name
     }
   }
 `;

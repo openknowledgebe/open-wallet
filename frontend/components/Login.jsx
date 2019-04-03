@@ -8,7 +8,7 @@ const LOG_ME_IN = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       id
-      firstName
+      name
     }
   }
 `;

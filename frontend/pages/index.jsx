@@ -3,11 +3,6 @@ import FormContainer from '../components/FormContainer';
 import Login from '../components/Login';
 import Register from '../components/Register';
 
-const Inner = styled.div`
-  margin: 0 auto;
-  width: 1200px;
-`;
-
 const AuthFormsStyle = styled.div`
   display: grid;
   grid-template-areas: 'a b';
@@ -24,14 +19,12 @@ function Home() {
   return (
     <div>
       Welcome to Next.js!
-      <Inner>
-        <FormContainer>
-          <AuthFormsStyle>
-            <Register className="register" />
-            <Login className="login" />
-          </AuthFormsStyle>
-        </FormContainer>
-      </Inner>
+      <FormContainer>
+        <AuthFormsStyle>
+          <Register className="register" />
+          <Login className="login" />
+        </AuthFormsStyle>
+      </FormContainer>
     </div>
   );
 }

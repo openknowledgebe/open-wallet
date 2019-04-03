@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Card, Elevation } from '@blueprintjs/core';
 
 const FormContainer = ({ children, ...rest }) => {
@@ -7,6 +8,10 @@ const FormContainer = ({ children, ...rest }) => {
       {children}
     </Card>
   );
+};
+
+FormContainer.propTypes = {
+  children: PropTypes.node.isRequired
 };
 
 export default FormContainer;

@@ -12,4 +12,11 @@ module.exports.connect = async () => {
     });
 };
 
-module.exports.disconnect = mongoose.disconnect();
+module.exports.disconnect = async () => {
+  return mongoose
+    .disconnect()
+    .then(() => console.log('DB disconnected'))
+    .catch(err => {
+      console.log(`DB disconnection failed: ${err}`);
+    });
+};

@@ -1,8 +1,6 @@
-const User = require("../../models/user");
+const User = require('../../models/user');
 
 module.exports = {
-  users: async () => {
-    return (users = await User.find());
-  },
+  users: async () => User.find(),
   me: (_, args, { user }) => user
 };

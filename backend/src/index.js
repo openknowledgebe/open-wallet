@@ -1,17 +1,19 @@
-require("dotenv").config();
-const mongoose = require("mongoose");
-const express = require("express");
-const { ApolloServer } = require("apollo-server-express");
-const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
-var cors = require("cors");
+/* eslint-disable no-console */
+require('dotenv').config();
+const mongoose = require('mongoose');
+const express = require('express');
+const { ApolloServer } = require('apollo-server-express');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
-const typeDefs = require("./graphql/types");
-const Query = require("./graphql/resolvers/queries");
-const Mutation = require("./graphql/resolvers/mutations");
-const User = require("./models/user");
+const typeDefs = require('./graphql/types');
+const Query = require('./graphql/resolvers/queries');
+const Mutation = require('./graphql/resolvers/mutations');
+const schemaDirectives = require('./graphql/directives');
 
-const PORT = 4000;
+const { loggedUser } = require('./auth');
+
+const PORT = process.env.PORT || 4000;
 
 const app = express();
 app.use(cookieParser());
@@ -23,18 +25,9 @@ const server = new ApolloServer({
     Query,
     Mutation
   },
+  schemaDirectives,
   context: async ({ req, res }) => {
-    // Get the token
-    const { token } = req.cookies;
-    let user = null;
-    if (token) {
-      // Verify the token
-      const { userId } = jwt.verify(token, process.env.APP_SECRET);
-      // Get the user
-      if (userId) {
-        user = await User.findById(userId);
-      }
-    }
+    const user = await loggedUser(req.cookies);
     return { req, res, user };
   },
   mocks: false
@@ -47,7 +40,7 @@ mongoose
     dbName: process.env.DB_NAME,
     useNewUrlParser: true
   })
-  .then(() => console.log("DB connected successfully!"))
+  .then(() => console.log('DB connected successfully!'))
   .catch(err => {
     console.log(`DB connection failed: ${err}`);
   });

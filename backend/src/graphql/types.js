@@ -1,19 +1,21 @@
-const { gql } = require("apollo-server-express");
+const { gql } = require('apollo-server-express');
 
 module.exports = gql`
+  directive @guest on FIELD_DEFINITION
+  directive @auth on FIELD_DEFINITION
   # types
 
   type Query {
-    users: [User]!
-    me: User
+    users: [User]! @auth
+    me: User @auth
   }
   type Mutation {
-    register(user: UserInput!): User!
-    logout: Response!
-    login(email: String!, password: String!): User!
+    register(user: UserInput!): User! @guest
+    logout: Boolean!
+    login(email: String!, password: String!): User! @guest
   }
-  type Response {
-    message: String!
+  type Success {
+    status: Boolean!
   }
   type Address {
     street: String!
@@ -29,8 +31,7 @@ module.exports = gql`
 
   type User {
     id: ID!
-    firstName: String!
-    lastName: String!
+    name: String!
     email: String!
     bankDetails: BankDetails
     address: Address
@@ -50,8 +51,7 @@ module.exports = gql`
   }
 
   input UserInput {
-    firstName: String!
-    lastName: String!
+    name: String!
     password: String!
     email: String!
     bankDetails: BankDetailsInput

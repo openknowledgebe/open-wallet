@@ -13,6 +13,7 @@ module.exports = gql`
     register(user: UserInput!): User! @guest
     logout: Boolean!
     login(email: String!, password: String!): User! @guest
+    updateProfile(user: UserUpdateInput!): User! @auth
   }
   type Success {
     status: Boolean!
@@ -54,6 +55,14 @@ module.exports = gql`
     name: String!
     password: String!
     email: String!
+    bankDetails: BankDetailsInput
+    address: AdressInput
+  }
+
+  input UserUpdateInput {
+    name: String
+    password: String
+    email: String
     bankDetails: BankDetailsInput
     address: AdressInput
   }

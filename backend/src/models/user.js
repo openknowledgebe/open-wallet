@@ -32,8 +32,17 @@ userSchema.pre('save', async function() {
     throw new Error('Email already exists!');
   }
   if (this.isModified('password')) {
-    // TODO Retrieve hash féacotor from env
+    // TODO Retrieve hash factor from env
     this.password = await bcrypt.hash(this.password, 10);
+  }
+});
+
+userSchema.pre('findOneAndUpdate', async function() {
+  const input = this.getUpdate();
+  const { password } = input;
+  if (password) {
+    // TODO Retrieve hash factor from env
+    this.getUpdate().password = await bcrypt.hash(password, 10);
   }
 });
 

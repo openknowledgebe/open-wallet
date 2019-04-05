@@ -17,7 +17,12 @@ const PORT = process.env.PORT || 4000;
 
 const app = express();
 app.use(cookieParser());
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true
+  })
+);
 
 const server = new ApolloServer({
   typeDefs,
@@ -33,12 +38,13 @@ const server = new ApolloServer({
   mocks: false
 });
 
-server.applyMiddleware({ app });
+server.applyMiddleware({ app, cors: false });
 
 mongoose
   .connect(process.env.MONGODB_URI, {
     dbName: process.env.DB_NAME,
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useFindAndModify: false
   })
   .then(() => console.log('DB connected successfully!'))
   .catch(err => {

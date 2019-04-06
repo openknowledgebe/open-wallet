@@ -1,27 +1,10 @@
-/* eslint-disable import/no-extraneous-dependencies */
 // import our production apollo-server instance
-const gql = require('graphql-tag');
 const { server, db } = require('../');
 
 const { startTestServer, toPromise, populate } = require('./utils');
+const { GET_ME, LOGIN_ME_IN, /* REGISTER, */ ALL_USERS } = require('./graphql/queryStrings');
 
-const GET_ME = gql`
-  query me {
-    me {
-      name
-      id
-    }
-  }
-`;
-
-const LOGIN_ME_IN = gql`
-  mutation login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      name
-      id
-    }
-  }
-`;
+// const testUser = { user: { name: 'Test Test', email: 'test@email.com', password: 'testing0189' } };
 
 describe('Server - e2e', () => {
   let stop;
@@ -88,5 +71,15 @@ describe('Server - e2e', () => {
     });
   });
 
+  describe('All users', () => {
+    it('requires to be logged in', async () => {
+      const res = await toPromise(
+        graphql({
+          query: ALL_USERS
+        })
+      );
+      expect(res).toMatchSnapshot();
+    });
+  });
   // TODO test registration
 });

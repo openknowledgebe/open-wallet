@@ -26,7 +26,7 @@ const constructTestServer = ({ context = defaultContext } = {}) => {
     context
   });
 
-  return { server };
+  return server;
 };
 
 module.exports.constructTestServer = constructTestServer;
@@ -41,7 +41,6 @@ const startTestServer = async server => {
 
   const link = new HttpLink({
     uri: `http://localhost:${httpServer.address().port}${server.graphqlPath}`,
-    credentials: 'include',
     fetch
   });
 

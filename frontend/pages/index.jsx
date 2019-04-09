@@ -1,32 +1,29 @@
-import styled from 'styled-components';
-import FormContainer from '../components/FormContainer';
-import Login from '../components/Login';
-import Register from '../components/Register';
+import React from 'react';
+import PropTypes from 'prop-types';
+import Landing from '../components/Landing';
+import MyAccount from '../components/MyAccount';
+import checkLoggedIn from '../lib/checkLoggedIn';
 
-const AuthFormsStyle = styled.div`
-  display: grid;
-  grid-template-areas: 'a b';
-  column-gap: 20px;
-  div:first-child {
-    grid-area: a;
-  }
-  div:last-child {
-    grid-area: b;
-  }
-`;
-
-function Home() {
+function Home(props) {
+  const { isAuthenticated } = props;
   return (
-    <div>
-      Welcome to Next.js!
-      <FormContainer>
-        <AuthFormsStyle>
-          <Register className="register" />
-          <Login className="login" />
-        </AuthFormsStyle>
-      </FormContainer>
-    </div>
+    <>
+      <Landing />
+      <MyAccount isAuthenticated={isAuthenticated} />
+    </>
   );
 }
 
+Home.getInitialProps = async ({ apolloClient }) => {
+  // TODO fix when logout will be implemented
+  const { loggedInUser } = await checkLoggedIn(apolloClient);
+
+  if (loggedInUser.me) return { isAuthenticated: true };
+
+  return { isAuthenticated: false };
+};
+
+Home.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired
+};
 export default Home;

@@ -16,8 +16,7 @@ const REGISTER_ME = gql`
 
 const Register = () => {
   const email = useFormInput('');
-  const firstName = useFormInput('');
-  const lastName = useFormInput('');
+  const name = useFormInput('');
   const password = useFormInput('');
   const passwordRepeat = useFormInput('');
 
@@ -27,8 +26,7 @@ const Register = () => {
       variables={{
         user: {
           email: email.value,
-          firstName: firstName.value,
-          lastName: lastName.value,
+          name: name.value,
           password: password.value
         }
       }}
@@ -37,7 +35,6 @@ const Register = () => {
       {/* Alert email sent */}
       {(register, { loading }) => (
         <div>
-          <h1>Sign up</h1>
           <form
             method="post"
             onSubmit={e => {
@@ -47,21 +44,12 @@ const Register = () => {
               }
             }}
           >
-            <FormGroup label="First name" labelFor="reg-firstname" disabled={loading}>
+            <FormGroup label="First name" labelFor="reg-name" disabled={loading}>
               <InputGroup
                 large
-                id="reg-firstname"
-                placeholder="Your first name"
-                {...firstName}
-                disabled={loading}
-              />
-            </FormGroup>
-            <FormGroup label="Last name" labelFor="reg-lastname" disabled={loading}>
-              <InputGroup
-                large
-                id="reg-lastname"
-                placeholder="Your last name"
-                {...lastName}
+                id="reg-name"
+                placeholder="Full name (e.g John Doe)"
+                {...name}
                 disabled={loading}
               />
             </FormGroup>

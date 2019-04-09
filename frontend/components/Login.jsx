@@ -23,7 +23,6 @@ const Login = () => {
       {(login, { loading }) => {
         return (
           <div>
-            <h1>Sign in</h1>
             <form
               method="post"
               onSubmit={e => {

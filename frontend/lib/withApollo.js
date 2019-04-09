@@ -16,5 +16,8 @@ export default withApollo(
         });
       },
       cache: new InMemoryCache().restore(initialState || {})
-    })
+    }),
+  {
+    getDataFromTree: 'ssr'
+  }
 );

@@ -1,17 +1,8 @@
 import React from 'react';
 import { FormGroup, InputGroup, Button, Intent } from '@blueprintjs/core';
-import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import useFormInput from './hooks/useFormInput';
-
-const LOG_ME_IN = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      id
-      name
-    }
-  }
-`;
+import { LOG_ME_IN } from '../graphql/queries';
 
 const Login = () => {
   const email = useFormInput('');

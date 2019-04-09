@@ -1,26 +1,7 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import Profile from './Profile';
-
-const QUERY_ME = gql`
-  query ME {
-    me {
-      name
-      email
-      bankDetails {
-        iban
-        bic
-      }
-      address {
-        street
-        city
-        country
-        zipCode
-      }
-    }
-  }
-`;
+import { QUERY_ME } from '../../graphql/queries';
 
 const ProfileContainer = () => {
   return (

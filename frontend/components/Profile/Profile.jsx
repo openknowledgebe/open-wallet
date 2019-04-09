@@ -1,21 +1,12 @@
 import React from 'react';
 import { Divider, Button } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
-import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import InputField from '../commons/InputField';
 import FormContainer from '../FormContainer';
 import useFormInput from '../hooks/useFormInput';
 import samePassword from '../../lib/samePassword';
-
-const UPDATE_ME = gql`
-  mutation UPDATE_PROFILE($user: UserUpdateInput!) {
-    updateProfile(user: $user) {
-      id
-      name
-    }
-  }
-`;
+import { UPDATE_ME } from '../../graphql/queries';
 
 const Profile = ({ user }) => {
   const { address, bankDetails } = user;

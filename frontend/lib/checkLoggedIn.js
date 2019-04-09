@@ -1,26 +1,9 @@
-import gql from 'graphql-tag';
+import { QUERY_ME } from '../graphql/queries';
 
 export default apolloClient =>
   apolloClient
     .query({
-      query: gql`
-        query ME {
-          me {
-            name
-            email
-            bankDetails {
-              iban
-              bic
-            }
-            address {
-              street
-              city
-              country
-              zipCode
-            }
-          }
-        }
-      `
+      query: QUERY_ME
     })
     .then(({ data }) => {
       return { loggedInUser: data };

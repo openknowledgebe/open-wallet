@@ -1,18 +1,9 @@
 import React from 'react';
 import { FormGroup, InputGroup, Button, Intent } from '@blueprintjs/core';
-import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import samePassword from '../lib/samePassword';
 import useFormInput from './hooks/useFormInput';
-
-const REGISTER_ME = gql`
-  mutation REGISTER($user: UserInput!) {
-    register(user: $user) {
-      id
-      name
-    }
-  }
-`;
+import { REGISTER_ME } from '../graphql/queries';
 
 const Register = () => {
   const email = useFormInput('');

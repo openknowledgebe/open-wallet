@@ -6,4 +6,4 @@ A work in progress - Experiment in which we attempt to manage invoices, expenses
 ```DB_NAME``` The database name (e.g. ```open-wallet``` or ```test```) <br />
 ```APP_SECRET``` A secret used by JWT to sign tokens (e.g. ```A secret is a secret``` of course this no more a valid secret)<br />
 
-see ...
+[see](./backend/.env.example)

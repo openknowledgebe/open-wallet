@@ -44,7 +44,7 @@ InputField.defaultProps = {
 };
 
 InputField.propTypes = {
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   type: PropTypes.string,
   isRequired: PropTypes.bool,
   description: PropTypes.string,

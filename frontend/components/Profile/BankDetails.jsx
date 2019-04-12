@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Mutation } from 'react-apollo';
 import { Divider, Button } from '@blueprintjs/core';
+import { validateAll } from 'indicative';
 import { UPDATE_ME } from '../../graphql/queries';
 import useFormInput from '../hooks/useFormInput';
 import InputField from '../commons/InputField';
 import { bankDetailsType } from '../../types';
+import formatErrors from '../../lib/formatErrors';
+import { required } from '../../lib/validation';
 
-const renderUI = (iban, bic, onSubmit, save, loading) => {
+const renderUI = (iban, bic, handleSubmit, save, loading) => {
   return (
     <div>
       <h2>My bank details</h2>
       <Divider />
       <br />
-      <form method="post" onSubmit={e => onSubmit(e, save)}>
+      <form method="post" onSubmit={e => handleSubmit(e, save)}>
         <InputField
           id="iban"
           label="IBAN"
@@ -40,6 +43,7 @@ const renderUI = (iban, bic, onSubmit, save, loading) => {
 const BankDetails = ({ bankDetails }) => {
   const iban = useFormInput(bankDetails ? bankDetails.iban : '');
   const bic = useFormInput(bankDetails ? bankDetails.bic : '');
+  const [errors, setErrors] = useState();
 
   const variables = {
     user: {
@@ -50,14 +54,19 @@ const BankDetails = ({ bankDetails }) => {
     }
   };
 
-  const onSubmit = (e, save) => {
+  const handleSubmit = (e, save) => {
     e.preventDefault();
-    save();
+    const ibanValidation = required('IBAN');
+    validateAll(iban.value, ibanValidation.rule, ibanValidation.message)
+      .then(() => save())
+      .catch(errs => {
+        setErrors(formatErrors(errs));
+      });
   };
   return (
     <Mutation mutation={UPDATE_ME} variables={variables}>
       {/* TODO handle error */}
-      {(save, { loading }) => renderUI(iban, bic, onSubmit, save, loading)}
+      {(save, { loading }) => renderUI(iban, bic, handleSubmit, save, loading)}
     </Mutation>
   );
 };

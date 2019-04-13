@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Button, Intent, Dialog } from '@blueprintjs/core';
+import { Button, Header, Modal } from 'semantic-ui-react';
+
 import Router from 'next/router';
 import PropTypes from 'prop-types';
 
 const FloatingButton = styled.div`
-  float: right;
-  margin-right: 130px;
-  margin-top: 15px;
+  right: 0;
+  position: fixed;
+  top: 10px;
   button {
-    position: fixed;
-    top: 10px;
-    z-index: -1;
+    z-index: 4;
     opacity: 0.7;
-    border-radius: 15px;
     animation: shadow-pulse 1s infinite;
   }
 
@@ -30,12 +28,10 @@ const FloatingButton = styled.div`
 
 const InnerDialog = styled.div`
   margin: 0 auto;
-  padding: 30px 0 10px 0;
+  padding: 0 0 10px 0;
   text-align: center;
   font-weight: bold;
-  a {
-    font-size: 24px;
-  }
+  font-size: 2.4rem;
 `;
 
 const MyAccount = ({ isAuthenticated }) => {
@@ -51,34 +47,27 @@ const MyAccount = ({ isAuthenticated }) => {
   return (
     <div>
       <FloatingButton>
-        <Button intent={Intent.SUCCESS} large onClick={toggleDialog}>
+        <Button size="huge" color="olive" circular onClick={toggleDialog}>
           My Account
         </Button>
       </FloatingButton>
-      <Dialog
-        icon="info-sign"
-        title="You are not authenticated"
-        isOpen={isOpen}
-        onClose={toggleDialog}
-        usePortal
-        autoFocus
-        canEscapeKeyClose
-        canOutsideClickClose
-        enforceFocus
-      >
-        <InnerDialog>
-          <Link href="/login">
-            <a>Login</a>
-          </Link>
-          <br />
-          or
-          <br />
-          <Link href="/register">
-            <a>Register</a>
-          </Link>
-          <br />
-        </InnerDialog>
-      </Dialog>
+      <Modal dimmer="blurring" size="small" open={isOpen} onClose={toggleDialog} closeIcon>
+        <Header size="huge" icon="warning circle" content="You are not authenticated" />
+        <Modal.Content>
+          <InnerDialog>
+            <Link href="/login">
+              <a>Login</a>
+            </Link>
+            <br />
+            or
+            <br />
+            <Link href="/register">
+              <a>Register</a>
+            </Link>
+            <br />
+          </InnerDialog>
+        </Modal.Content>
+      </Modal>
     </div>
   );
 };

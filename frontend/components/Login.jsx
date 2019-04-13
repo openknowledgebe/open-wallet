@@ -1,6 +1,7 @@
 import React from 'react';
-import { FormGroup, InputGroup, Button, Intent } from '@blueprintjs/core';
 import { Mutation } from 'react-apollo';
+import { Form } from 'semantic-ui-react';
+import InputField from './commons/InputField';
 import useFormInput from './hooks/useFormInput';
 import { LOG_ME_IN } from '../graphql/queries';
 
@@ -14,37 +15,36 @@ const Login = () => {
       {(login, { loading }) => {
         return (
           <div>
-            <form
+            <Form
+              loading={loading}
+              size="massive"
               method="post"
               onSubmit={e => {
                 e.preventDefault();
                 login();
               }}
             >
-              <FormGroup label="Email" labelFor="email" disabled={loading}>
-                <InputGroup
-                  disabled={loading}
-                  large
-                  type="email"
-                  id="email"
-                  placeholder="Your email address"
-                  {...email}
-                />
-              </FormGroup>
-              <FormGroup label="Password" labelFor="password" disabled={loading}>
-                <InputGroup
-                  disabled={loading}
-                  large
-                  type="password"
-                  id="password"
-                  placeholder="Your password"
-                  {...password}
-                />
-              </FormGroup>
-              <Button large type="submit" loading={loading} intent={Intent.PRIMARY}>
+              <InputField
+                label="Email"
+                name="email"
+                type="email"
+                id="login-email"
+                placeholder="Your email address"
+                autoFocus
+                {...email}
+              />
+              <InputField
+                name="password"
+                label="Password"
+                type="password"
+                id="login-password"
+                placeholder="Your password"
+                {...password}
+              />
+              <Form.Button primary size="massive" type="submit">
                 Sign in
-              </Button>
-            </form>
+              </Form.Button>
+            </Form>
           </div>
         );
       }}

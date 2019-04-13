@@ -1,19 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Divider } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
+import { Card } from 'semantic-ui-react';
 
-const Footer = styled.footer`
+const Footer = styled.div`
   display: flex;
   justify-content: space-between;
 `;
 
 const CardFooter = ({ children }) => {
   return (
-    <div style={{ marginTop: '15px' }}>
-      <Divider style={{ marginBottom: '10px' }} />
+    <Card.Content as="footer">
       <Footer>{children}</Footer>
-    </div>
+    </Card.Content>
   );
 };
 

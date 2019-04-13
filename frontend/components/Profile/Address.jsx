@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Divider, Button } from '@blueprintjs/core';
+import { Button, Card, Form } from 'semantic-ui-react';
 import { Mutation } from 'react-apollo';
 import InputField from '../commons/InputField';
 import useFormFields from '../hooks/useFormFields';
@@ -57,49 +57,47 @@ Address.propTypes = {
 
 const UI = ({ address, onSubmit, loading, save }) => {
   return (
-    <div>
-      <h2>My address</h2>
-      <Divider />
-      <br />
-      <form method="post" onSubmit={e => onSubmit(e, save)}>
-        <InputField
-          id="street"
-          label="Street"
-          value={address.fields.street}
-          handler={address.onChange}
-          disabled={loading}
-          name="street"
-        />
-        <InputField
-          id="city"
-          label="City"
-          value={address.fields.city}
-          handler={address.onChange}
-          disabled={loading}
-          name="city"
-        />
-        <InputField
-          id="zipCode"
-          label="Zip Code"
-          value={address.fields.zipCode}
-          handler={address.onChange}
-          disabled={loading}
-          name="zipCode"
-          type="number"
-        />
-        <InputField
-          id="country"
-          label="Country"
-          value={address.fields.country}
-          handler={address.onChange}
-          disabled={loading}
-          name="country"
-        />
-        <Button loading={loading} type="submit">
-          Save
-        </Button>
-      </form>
-    </div>
+    <Card fluid>
+      <Card.Content>
+        <h2>My address</h2>
+      </Card.Content>
+      <Card.Content>
+        <Form size="massive" loading={loading} method="post" onSubmit={e => onSubmit(e, save)}>
+          <InputField
+            id="up-profile-address-street"
+            label="Street"
+            value={address.fields.street}
+            onChange={address.onChange}
+            name="street"
+          />
+          <InputField
+            id="up-profile-address-city"
+            label="City"
+            value={address.fields.city}
+            onChange={address.onChange}
+            name="city"
+          />
+          <InputField
+            id="up-profile-address-zipCode"
+            label="Zip Code"
+            value={address.fields.zipCode}
+            onChange={address.onChange}
+            name="zipCode"
+            type="number"
+          />
+          <InputField
+            id="up-profile-address-country"
+            label="Country"
+            value={address.fields.country}
+            onChange={address.onChange}
+            name="country"
+          />
+          <Button size="massive" primary type="submit">
+            Save
+          </Button>
+        </Form>
+      </Card.Content>
+    </Card>
   );
 };
 

@@ -12,12 +12,8 @@ const Profile = ({ user }) => {
   return (
     <FormContainer>
       <General name={user.name} email={user.email} />
-      <br />
       <Address address={address} />
-      <br />
       <BankDetails bankDetails={bankDetails} />
-      <br />
-      <br />
       <Password />
     </FormContainer>
   );

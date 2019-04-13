@@ -1,13 +1,59 @@
 import React from 'react';
 import App, { Container } from 'next/app';
+import Head from 'next/head';
 import { ApolloProvider } from 'react-apollo';
-import { FocusStyleManager } from '@blueprintjs/core';
+import { createGlobalStyle } from 'styled-components';
 import withApollo from '../lib/withApollo';
+import 'semantic-ui-css/semantic.min.css';
 import 'normalize.css';
-import '@blueprintjs/core/lib/css/blueprint.css';
-import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 
-FocusStyleManager.onlyShowFocusOnTabs();
+const GlobalStyle = createGlobalStyle`
+  html {
+    box-sizing: border-box;
+    font-size: 62.5%;
+    height: 100%;
+  }
+
+  body, #__next {
+    height: 100%;
+    min-height: 100%;
+  }
+
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+
+  h1, h2, h3, h4 {
+    margin: 0;
+  }
+
+  body {
+    font-size: 1.6rem;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', Helvetica, sans-serif;
+  }
+  
+  p {
+    line-height: 1.6;
+  }
+
+  h1 {
+    font-size: 3.2rem;
+  }
+
+  h2 {
+    font-size: 2.4rem;
+  }
+
+  h3 {
+    font-size: 1.9rem;
+  }
+
+  h4 {
+    font-size: 1.6rem;
+  }
+`;
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -25,6 +71,12 @@ class MyApp extends App {
 
     return (
       <Container>
+        <GlobalStyle />
+        <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta charSet="utf-8" />
+          <title>Open Wallet</title>
+        </Head>
         <ApolloProvider client={apollo}>
           <Component {...pageProps} />
         </ApolloProvider>

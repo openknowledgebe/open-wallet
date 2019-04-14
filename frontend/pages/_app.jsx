@@ -1,11 +1,19 @@
 import React from 'react';
 import App, { Container } from 'next/app';
 import Head from 'next/head';
+import NProgress from 'nprogress';
+import Router from 'next/router';
 import { ApolloProvider } from 'react-apollo';
 import { createGlobalStyle } from 'styled-components';
 import withApollo from '../lib/withApollo';
 import 'semantic-ui-css/semantic.min.css';
 import 'normalize.css';
+
+Router.events.on('routeChangeStart', () => {
+  NProgress.start();
+});
+Router.events.on('routeChangeComplete', () => NProgress.done());
+Router.events.on('routeChangeError', () => NProgress.done());
 
 const GlobalStyle = createGlobalStyle`
   html {

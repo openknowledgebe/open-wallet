@@ -18,7 +18,7 @@ const renderUI = (password, passwordRepeat, onSubmit, save, loading) => {
             id="password"
             label="Password"
             value={password.value}
-            handler={password.onChange}
+            onChange={password.onChange}
             disabled={loading}
             name="password"
             type="password"
@@ -27,7 +27,7 @@ const renderUI = (password, passwordRepeat, onSubmit, save, loading) => {
             id="password-repeat"
             label="Confirm password"
             value={passwordRepeat.value}
-            handler={passwordRepeat.onChange}
+            onChange={passwordRepeat.onChange}
             disabled={loading}
             name="password-repeat"
             type="password"

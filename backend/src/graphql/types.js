@@ -13,6 +13,7 @@ module.exports = gql`
     register(user: UserInput!): User! @guest
     logout: Boolean!
     login(email: String!, password: String!): User! @guest
+    expenseClaim(expense: Expense!): Transaction! @auth
   }
   type Success {
     status: Boolean!
@@ -37,6 +38,19 @@ module.exports = gql`
     address: Address
   }
 
+  type Transaction {
+    id: ID!
+    flow: Flow!
+    state: State!
+    user: User!
+    amount: Float!
+    date: String!
+    expDate: String
+    description: String
+    file: String
+    VAT: Int
+  }
+
   #inputs
   input AdressInput {
     street: String!
@@ -56,5 +70,27 @@ module.exports = gql`
     email: String!
     bankDetails: BankDetailsInput
     address: AdressInput
+  }
+
+  input Expense {
+    amount: Float!
+    date: String
+    expDate: String
+    description: String!
+    receipt: Upload!
+    VAT: Int
+  }
+
+  #enums
+  enum Flow {
+    IN
+    OUT
+  }
+
+  enum State {
+    UNCLEARED
+    CLEARED
+    PAID
+    REJECTED
   }
 `;

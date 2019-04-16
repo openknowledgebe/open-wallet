@@ -7,7 +7,6 @@ import { ApolloProvider } from 'react-apollo';
 import { createGlobalStyle } from 'styled-components';
 import withApollo from '../lib/withApollo';
 import 'semantic-ui-css/semantic.min.css';
-import 'normalize.css';
 
 Router.events.on('routeChangeStart', () => {
   NProgress.start();

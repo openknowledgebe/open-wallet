@@ -7,16 +7,16 @@ const transactionSchema = new Schema({
     type: String,
     enum: ['IN', 'OUT']
   },
-  balanceId: {
+  balance: {
     type: String // should be ObjectId
   },
-  companyId: {
+  company: {
     type: String // should be ObjectId
   },
-  categoryId: {
+  category: {
     type: String // should be ObjectId
   },
-  userId: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: 'User'
   },

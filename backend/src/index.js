@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 require('dotenv').config();
+const cloudinary = require('cloudinary').v2;
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const cookieParser = require('cookie-parser');
@@ -21,7 +22,7 @@ app.use(cookieParser());
 const context = async ({ req, res }) => {
   const user = await auth.loggedUser(req.cookies, models);
   // adopting injection pattern to ease mocking
-  return { req, res, user, auth, models };
+  return { req, res, user, auth, models, cloudinary };
 };
 
 const server = new ApolloServer({
@@ -60,5 +61,6 @@ module.exports = {
   db,
   auth,
   server,
-  app
+  app,
+  cloudinary
 };

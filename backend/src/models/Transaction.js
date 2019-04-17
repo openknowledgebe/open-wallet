@@ -41,6 +41,10 @@ const transactionSchema = new Schema({
   },
   VAT: {
     type: Number
+  },
+  type: {
+    type: String,
+    enum: ['EXPENSE', 'INVOICE']
   }
 });
 

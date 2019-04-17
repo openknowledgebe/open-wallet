@@ -49,6 +49,7 @@ module.exports = gql`
     description: String
     file: String
     VAT: Int
+    type: TransactionType!
   }
 
   #inputs
@@ -92,5 +93,10 @@ module.exports = gql`
     CLEARED
     PAID
     REJECTED
+  }
+
+  enum TransactionType {
+    INVOICE
+    EXPENSE
   }
 `;

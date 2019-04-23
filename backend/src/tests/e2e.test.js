@@ -1,7 +1,7 @@
 // import our production apollo-server instance
 const { server, db } = require('../');
 
-const { startTestServer, toPromise, populate } = require('./utils');
+const { startTestServer, toPromise, populate, clean } = require('./utils');
 const { GET_ME, LOGIN_ME_IN, /* REGISTER, */ ALL_USERS } = require('./graphql/queryStrings');
 
 // const testUser = { user: { name: 'Test Test', email: 'test@email.com', password: 'testing0189' } };
@@ -16,6 +16,7 @@ describe('Server - e2e', () => {
   });
 
   afterAll(async () => {
+    await clean();
     await db.disconnect();
   });
 

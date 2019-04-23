@@ -81,4 +81,12 @@ const populate = async () => {
   }
 };
 
+// clean database
+const clean = async () => {
+  const { User, Transaction } = models;
+  await User.remove({});
+  await Transaction.remove({});
+};
+
 module.exports.populate = populate;
+module.exports.clean = clean;

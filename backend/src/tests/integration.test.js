@@ -1,7 +1,7 @@
 const { createTestClient } = require('apollo-server-testing');
 const { auth } = require('./mocks/index');
 const { db, models } = require('../');
-const { constructTestServer, populate } = require('./utils');
+const { constructTestServer, populate, clean } = require('./utils');
 
 const { LOGIN_ME_IN, GET_ME, REGISTER, ALL_USERS } = require('./graphql/queryStrings');
 
@@ -16,6 +16,7 @@ describe('Authenticated user', () => {
   });
 
   afterAll(async () => {
+    await clean();
     await db.disconnect();
   });
 
@@ -61,7 +62,7 @@ describe('Authenticated user', () => {
       const res = await query({
         query: GET_ME
       });
-      expect(res.data.me).toEqual({ name: loggedUser.name, id: loggedUser.id });
+      expect(res.data.me).toEqual({ name: loggedUser.name, email: loggedUser.email });
     });
   });
 

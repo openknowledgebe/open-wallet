@@ -73,7 +73,7 @@ exports[`Server - e2e Login succeeds 1`] = `
 Object {
   "data": Object {
     "login": Object {
-      "id": "5ca36073a89e1e5c7ad111af",
+      "email": "sylvie@hotmail.com",
       "name": "Sylvie Delcourt",
     },
   },

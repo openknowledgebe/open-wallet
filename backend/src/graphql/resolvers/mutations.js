@@ -20,7 +20,11 @@ module.exports = {
   login: async (_, { email, password }, { res, models: { User }, auth }) => {
     return auth.attemptLogin(email, password, res, User);
   },
-  expenseClaim: async (unused, { expense }, { user, models: { Transaction }, cloudinary }) => {
+  expenseClaim: async (
+    unused,
+    { expense },
+    { user, models: { Transaction, User }, cloudinary }
+  ) => {
     expense.user = user.id;
     expense.flow = 'IN';
     expense.type = 'EXPENSE';
@@ -29,7 +33,16 @@ module.exports = {
     const file = await store(receipt, 'expense receipt', '/expenses/pending/', cloudinary);
     expense.file = file.secure_url;
     const tr = await Transaction(expense).save();
-    tr.user = user;
+    const myExpenses = user.expenses || [];
+    myExpenses.push(tr.id);
+
+    const upUser = await User.findOneAndUpdate(
+      { _id: user.id },
+      { expenses: myExpenses },
+      { new: true }
+    );
+
+    tr.user = upUser;
     return tr;
   }
 };

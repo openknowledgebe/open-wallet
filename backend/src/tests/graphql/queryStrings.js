@@ -5,7 +5,7 @@ module.exports.GET_ME = gql`
   query me {
     me {
       name
-      id
+      email
     }
   }
 `;
@@ -14,7 +14,7 @@ module.exports.LOGIN_ME_IN = gql`
   mutation login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       name
-      id
+      email
     }
   }
 `;
@@ -23,7 +23,7 @@ module.exports.REGISTER = gql`
   mutation register($user: UserInput!) {
     register(user: $user) {
       name
-      id
+      email
     }
   }
 `;
@@ -32,7 +32,7 @@ module.exports.ALL_USERS = gql`
   query users {
     users {
       name
-      id
+      email
     }
   }
 `;

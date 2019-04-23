@@ -35,7 +35,8 @@ module.exports = gql`
     name: String!
     email: String!
     bankDetails: BankDetails
-    address: Address
+    address: Address,
+    epenses: []
   }
 
   type Transaction {

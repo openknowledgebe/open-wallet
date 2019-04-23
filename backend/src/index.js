@@ -22,7 +22,7 @@ app.use(cookieParser());
 const context = async ({ req, res }) => {
   const user = await auth.loggedUser(req.cookies, models);
   // adopting injection pattern to ease mocking
-  return { req, res, user, auth, models, cloudinary };
+  return { req, res, user, auth, models, cloudinary, db };
 };
 
 const server = new ApolloServer({

@@ -20,3 +20,5 @@ module.exports.disconnect = async () => {
       console.log(`DB disconnection failed: ${err}`);
     });
 };
+
+module.exports.startSession = async () => mongoose.startSession();

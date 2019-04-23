@@ -1,14 +1,11 @@
 const store = (file, tags, folder, cloudinary) =>
   new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { tags, public_id: 'hello-word.pdf', folder },
-      (err, image) => {
-        if (image) {
-          return resolve(image);
-        }
-        return reject(err);
+    const uploadStream = cloudinary.uploader.upload_stream({ tags, folder }, (err, image) => {
+      if (image) {
+        return resolve(image);
       }
-    );
+      return reject(err);
+    });
     file.createReadStream().pipe(uploadStream);
   });
 
@@ -23,26 +20,44 @@ module.exports = {
   expenseClaim: async (
     unused,
     { expense },
-    { user, models: { Transaction, User }, cloudinary }
+    { user, models: { Transaction, User }, cloudinary, db }
   ) => {
     expense.user = user.id;
     expense.flow = 'IN';
     expense.type = 'EXPENSE';
     expense.date = expense.date || Date.now();
     const receipt = await expense.receipt;
-    const file = await store(receipt, 'expense receipt', '/expenses/pending/', cloudinary);
-    expense.file = file.secure_url;
-    const tr = await Transaction(expense).save();
-    const myExpenses = user.expenses || [];
-    myExpenses.push(tr.id);
 
-    const upUser = await User.findOneAndUpdate(
-      { _id: user.id },
-      { expenses: myExpenses },
-      { new: true }
-    );
+    const session = await db.startSession();
+    let tr;
+    try {
+      // upload the file to cloudinary
+      const file = await store(receipt, 'expense receipt', '/expenses/pending/', cloudinary);
+      expense.file = file.secure_url;
 
-    tr.user = upUser;
+      const opts = { session };
+      session.startTransaction();
+
+      // save the expense
+      tr = await Transaction(expense).save(opts);
+
+      // save the transaction id in the user's expenses
+      const myExpenses = user.expenses || [];
+      myExpenses.push(tr.id);
+      const upUser = await User.findOneAndUpdate(
+        { _id: user.id },
+        { expenses: myExpenses },
+        { new: true, ...opts }
+      );
+
+      tr.user = upUser;
+      await session.commitTransaction();
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
     return tr;
   }
 };

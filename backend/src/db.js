@@ -6,7 +6,13 @@ module.exports.connect = async () => {
       dbName: process.env.DB_NAME,
       useNewUrlParser: true
     })
-    .then(() => console.log('DB connected successfully!'))
+    .then(async () => {
+      console.log('DB connected successfully!');
+      await mongoose.connection.createCollection('users');
+      await mongoose.connection.createCollection('transactions');
+      await mongoose.connection.createCollection('categories');
+      console.log('Collections created successfully!');
+    })
     .catch(err => {
       console.log(`DB connection failed: ${err}`);
     });

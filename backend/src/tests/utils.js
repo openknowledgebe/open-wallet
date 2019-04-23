@@ -57,35 +57,33 @@ const startTestServer = async server => {
 
 module.exports.startTestServer = startTestServer;
 
+// clean database
+const clean = async () => {
+  const { User, Transaction } = models;
+  await User.deleteMany({});
+  await Transaction.deleteMany({});
+};
+
 // populate database
 
 const populate = async () => {
   const { User } = models;
-  const count = await User.countDocuments();
-  if (!count) {
-    await User({
-      name: 'John Doe',
-      email: 'john.doe@john.com',
-      password: 'johnnyyyyy'
-    }).save();
-    await User({
-      name: 'Sylvie Delcourt',
-      email: 'Sylvie@hotmail.com',
-      password: 'sylvie2324'
-    }).save();
-    await User({
-      name: 'Mitch Mitch',
-      email: 'mitchell@gmail.com',
-      password: 'mitchelll'
-    }).save();
-  }
-};
 
-// clean database
-const clean = async () => {
-  const { User, Transaction } = models;
-  await User.remove({});
-  await Transaction.remove({});
+  await User({
+    name: 'John Doe',
+    email: 'john.doe@john.com',
+    password: 'johnnyyyyy'
+  }).save();
+  await User({
+    name: 'Sylvie Delcourt',
+    email: 'Sylvie@hotmail.com',
+    password: 'sylvie2324'
+  }).save();
+  await User({
+    name: 'Mitch Mitch',
+    email: 'mitchell@gmail.com',
+    password: 'mitchelll'
+  }).save();
 };
 
 module.exports.populate = populate;

@@ -2,9 +2,9 @@
 const { server, db } = require('../');
 
 const { startTestServer, toPromise, populate, clean } = require('./utils');
-const { GET_ME, LOGIN_ME_IN, /* REGISTER, */ ALL_USERS } = require('./graphql/queryStrings');
+const { GET_ME, LOGIN_ME_IN, REGISTER, ALL_USERS } = require('./graphql/queryStrings');
 
-// const testUser = { user: { name: 'Test Test', email: 'test@email.com', password: 'testing0189' } };
+const testUser = { user: { name: 'Test Test', email: 'tesT@email.com', password: 'testing0189' } };
 
 describe('Server - e2e', () => {
   let stop;
@@ -28,7 +28,9 @@ describe('Server - e2e', () => {
     graphql = testServer.graphql;
   });
 
-  afterEach(async () => stop());
+  afterEach(async () => {
+    stop();
+  });
 
   describe('Me query', () => {
     it('fails when user not logged in', async () => {
@@ -82,5 +84,41 @@ describe('Server - e2e', () => {
       expect(res).toMatchSnapshot();
     });
   });
-  // TODO test registration
+
+  describe('Register', () => {
+    it('fails if email already exists', async () => {
+      const copyTestUser = { user: { ...testUser.user, email: 'john.doe@john.com' } };
+
+      const res = await toPromise(
+        graphql({
+          query: REGISTER,
+          variables: copyTestUser
+        })
+      );
+      expect(res).toMatchSnapshot();
+    });
+
+    it('ignores email case for validation', async () => {
+      const copyTestUser = { user: { ...testUser.user, email: 'johN.dOe@john.com' } };
+
+      const res = await toPromise(
+        graphql({
+          query: REGISTER,
+          variables: copyTestUser
+        })
+      );
+      expect(res).toMatchSnapshot();
+    });
+
+    it('succeeds & returns lower case email', async () => {
+      const res = await toPromise(
+        graphql({
+          query: REGISTER,
+          variables: testUser
+        })
+      );
+      expect(res).toMatchSnapshot();
+      expect(res.data.register.email).toBe('test@email.com');
+    });
+  });
 });

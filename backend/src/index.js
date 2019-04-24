@@ -39,7 +39,14 @@ const server = new ApolloServer({
   },
   schemaDirectives,
   context,
-  mocks: false
+  mocks: false,
+  formatError: error => {
+    const { extensions } = error;
+    if (extensions.code === 'BAD_USER_INPUT') {
+      error.message = error.message.split(';')[1].trim();
+    }
+    return error;
+  }
 });
 
 if (process.env.NODE_ENV !== 'test') {

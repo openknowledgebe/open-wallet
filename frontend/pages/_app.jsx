@@ -1,7 +1,13 @@
-import React from "react";
-import App, { Container } from "next/app";
-import { ApolloProvider } from "react-apollo";
-import withApollo from "../lib/withApollo";
+import React from 'react';
+import App, { Container } from 'next/app';
+import { ApolloProvider } from 'react-apollo';
+import { FocusStyleManager } from '@blueprintjs/core';
+import withApollo from '../lib/withApollo';
+import 'normalize.css';
+import '@blueprintjs/core/lib/css/blueprint.css';
+import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+
+FocusStyleManager.onlyShowFocusOnTabs();
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {

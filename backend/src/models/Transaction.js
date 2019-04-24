@@ -21,7 +21,8 @@ const transactionSchema = new Schema({
     ref: 'User'
   },
   description: {
-    type: String
+    type: String,
+    trim: true
   },
   amount: {
     type: Number

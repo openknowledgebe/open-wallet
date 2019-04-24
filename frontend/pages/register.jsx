@@ -14,7 +14,7 @@ const RegisterPage = () => {
       <Register />
       <CardFooter>
         <Link href="/login">
-          <a>Already registerd?</a>
+          <a>Already registered?</a>
         </Link>
       </CardFooter>
     </CenteredCard>

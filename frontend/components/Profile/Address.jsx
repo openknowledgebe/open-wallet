@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Divider, Button } from '@blueprintjs/core';
 import { Mutation } from 'react-apollo';
+import { validateAll } from 'indicative';
 import InputField from '../commons/InputField';
 import useFormFields from '../hooks/useFormFields';
 import { UPDATE_ME } from '../../graphql/queries';
 import { addressType } from '../../types';
+import formatErrors from '../../lib/formatErrors';
+import { required } from '../../lib/validation';
 
 const Address = ({ address }) => {
+  const [errors, setErrors] = useState();
+
   let addr = address;
   if (!addr) {
     addr = {
@@ -21,11 +26,6 @@ const Address = ({ address }) => {
     ...addr
   });
 
-  const onSubmit = (e, save) => {
-    e.preventDefault();
-    save();
-  };
-
   const variables = {
     user: {
       address: {
@@ -37,11 +37,42 @@ const Address = ({ address }) => {
     }
   };
 
+  const handleSubmit = (e, save) => {
+    e.preventDefault();
+    const streetValidation = required('Street');
+    const cityValidation = required('City');
+    const countryValidation = required('Country');
+
+    const data = variables.user.address;
+
+    const rules = {
+      ...streetValidation.rule,
+      ...cityValidation.rule,
+      ...countryValidation.rule,
+      zipCode: 'required'
+    };
+    const messages = {
+      ...streetValidation.message,
+      ...cityValidation.message,
+      ...countryValidation.message,
+      'zipCode.required': 'Zip Code is required.'
+    };
+
+    validateAll(data, rules, messages)
+      .then(() => {
+        save();
+      })
+      .catch(errs => {
+        console.log(errs);
+        setErrors(formatErrors(errs));
+      });
+  };
+
   return (
     <Mutation mutation={UPDATE_ME} variables={variables}>
       {/* TODO handle error */}
       {(save, { loading }) => (
-        <UI address={newAddress} onSubmit={onSubmit} loading={loading} save={save} />
+        <UI address={newAddress} handleSubmit={handleSubmit} loading={loading} save={save} />
       )}
     </Mutation>
   );
@@ -55,13 +86,13 @@ Address.propTypes = {
   address: addressType
 };
 
-const UI = ({ address, onSubmit, loading, save }) => {
+const UI = ({ address, handleSubmit, loading, save }) => {
   return (
     <div>
       <h2>My address</h2>
       <Divider />
       <br />
-      <form method="post" onSubmit={e => onSubmit(e, save)}>
+      <form method="post" onSubmit={e => handleSubmit(e, save)}>
         <InputField
           id="street"
           label="Street"
@@ -105,7 +136,7 @@ const UI = ({ address, onSubmit, loading, save }) => {
 
 UI.propTypes = {
   address: addressType.isRequired,
-  onSubmit: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired
 };

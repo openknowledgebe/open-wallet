@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Authenticated user requires being logout to login 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: You must be logged out.],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`Authenticated user requires being logout to register 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: You must be logged out.],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;

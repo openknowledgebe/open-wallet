@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 require('dotenv').config();
-const mongoose = require('mongoose');
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const cookieParser = require('cookie-parser');
@@ -11,7 +10,9 @@ const Query = require('./graphql/resolvers/queries');
 const Mutation = require('./graphql/resolvers/mutations');
 const schemaDirectives = require('./graphql/directives');
 
-const { loggedUser } = require('./auth');
+const models = require('./models');
+const db = require('./db');
+const auth = require('./auth');
 
 const PORT = process.env.PORT || 4000;
 
@@ -24,6 +25,12 @@ app.use(
   })
 );
 
+const context = async ({ req, res }) => {
+  const user = await auth.loggedUser(req.cookies, models);
+  // adopting injection pattern to ease mocking
+  return { req, res, user, auth, models };
+};
+
 const server = new ApolloServer({
   typeDefs,
   resolvers: {
@@ -31,26 +38,34 @@ const server = new ApolloServer({
     Mutation
   },
   schemaDirectives,
-  context: async ({ req, res }) => {
-    const user = await loggedUser(req.cookies);
-    return { req, res, user };
-  },
+  context,
   mocks: false
 });
 
-server.applyMiddleware({ app, cors: false });
+if (process.env.NODE_ENV !== 'test') {
+  // only start if not in test env
+  // see test folder for test server config
+  server.applyMiddleware({ app, cors: false });
+  db.connect();
 
-mongoose
-  .connect(process.env.MONGODB_URI, {
-    dbName: process.env.DB_NAME,
-    useNewUrlParser: true,
-    useFindAndModify: false
-  })
-  .then(() => console.log('DB connected successfully!'))
-  .catch(err => {
-    console.log(`DB connection failed: ${err}`);
-  });
+  app.listen({ port: PORT }, () =>
+    console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`)
+  );
+}
 
-app.listen({ port: PORT }, () =>
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-);
+module.exports = {
+  models,
+  typeDefs,
+  // TODO exports resolvers in their on folder via index
+  resolvers: {
+    Query,
+    Mutation
+  },
+  context,
+  ApolloServer,
+  schemaDirectives,
+  db,
+  auth,
+  server,
+  app
+};

@@ -39,8 +39,10 @@ const startTestServer = async server => {
   server.applyMiddleware({ app });
   const httpServer = await app.listen(0);
 
+  const uri = `http://localhost:${httpServer.address().port}${server.graphqlPath}`;
+
   const link = new HttpLink({
-    uri: `http://localhost:${httpServer.address().port}${server.graphqlPath}`,
+    uri,
     fetch
   });
 
@@ -48,12 +50,36 @@ const startTestServer = async server => {
 
   return {
     link,
-    stop: async () => {
+    uri,
+    stop: () => {
       httpServer.close();
     },
     graphql: executeOperation
   };
 };
+
+// /**
+//  * Upload server
+//  */
+// const startTestUploadServer = async server => {
+//   server.applyMiddleware({ app });
+//   const httpServer = await app.listen(0);
+
+//   const link = new HttpLink({
+//     uri: `http://localhost:${httpServer.address().port}${server.graphqlPath}`,
+//     fetch
+//   });
+
+//   const executeOperation = ({ query, variables = {} }) => execute(link, { query, variables });
+
+//   return {
+//     link,
+//     stop: async () => {
+//       httpServer.close();
+//     },
+//     graphql: executeOperation
+//   };
+// };
 
 module.exports.startTestServer = startTestServer;
 

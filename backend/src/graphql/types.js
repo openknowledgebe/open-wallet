@@ -83,17 +83,17 @@ module.exports = gql`
 
   input UserUpdateInput {
     name: String
-    password: String
-    email: String
+    password: String @constraint(minLength: 8)
+    email: String @constraint(format: "email")
     bankDetails: BankDetailsInput
     address: AdressInput
   }
 
   input Expense {
     amount: Float!
-    date: String
-    expDate: String
-    description: String!
+    date: String @constraint(format: "date")
+    expDate: String @constraint(format: "date")
+    description: String! @constraint(required: true)
     receipt: Upload!
     VAT: Int
   }

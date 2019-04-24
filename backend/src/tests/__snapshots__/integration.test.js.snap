@@ -1,5 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Authenticated user claims expenses succeeds 1`] = `
+Object {
+  "data": Object {
+    "expenseClaim": Object {
+      "flow": "IN",
+      "type": "EXPENSE",
+      "user": Object {
+        "email": "john.doe@john.com",
+        "name": "John Doe",
+      },
+    },
+  },
+}
+`;
+
 exports[`Authenticated user requires being logout to login 1`] = `
 Object {
   "data": null,

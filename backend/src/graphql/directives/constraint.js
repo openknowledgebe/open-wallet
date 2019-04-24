@@ -5,16 +5,26 @@ const { GraphQLScalarType, GraphQLNonNull, GraphQLString } = require('graphql');
 const {
   checkEmail,
   lengthIsGreaterOrEqual,
-  lengthIsLowerOrEqual
+  lengthIsLowerOrEqual,
+  validDate
 } = require('../../lib/validation');
-const { WRONG_EMAIL_FORMAT, TOO_SHORT, TOO_LONG, REQUIRED } = require('../../messages');
+const {
+  WRONG_EMAIL_FORMAT,
+  TOO_SHORT,
+  TOO_LONG,
+  REQUIRED,
+  INVALID_DATE_FORMAT
+} = require('../../messages');
 
 // inspired by https://github.com/confuser/graphql-constraint-directive
 
 const validate = (fieldName, value, args) => {
-  if (args.format && args.format === 'email') {
-    if (!checkEmail(value)) {
+  if (args.format) {
+    if (args.format === 'email' && !checkEmail(value)) {
       throw new UserInputError(WRONG_EMAIL_FORMAT);
+    }
+    if (args.format === 'date' && !validDate(value)) {
+      throw new UserInputError(INVALID_DATE_FORMAT);
     }
   }
 
@@ -70,7 +80,7 @@ class ConstraintDirective extends SchemaDirectiveVisitor {
       field.type = new GraphQLNonNull(
         new ConstraintStringType(field.name, field.type.ofType, this.args)
       );
-    } else if (field.type instanceof GraphQLString) {
+    } else if (field.type === GraphQLString) {
       field.type = new ConstraintStringType(field.name, field.type, this.args);
     } else {
       throw new Error(`Not a scalar type: ${field.type}`);

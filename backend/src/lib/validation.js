@@ -15,3 +15,5 @@ exports.lengthIsLowerOrEqual = (value, maxLength = MAX_LENGTH) => {
 exports.lengthIsGreaterOrEqual = (value, minLength = MIN_LENGTH) => {
   return value.length >= minLength;
 };
+
+exports.validDate = value => Number.isNaN(new Date(value));

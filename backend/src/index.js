@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const typeDefs = require('./graphql/types');
 const Query = require('./graphql/resolvers/queries');
@@ -17,6 +18,12 @@ const PORT = process.env.PORT || 4000;
 
 const app = express();
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: true,
+    credentials: true
+  })
+);
 
 const context = async ({ req, res }) => {
   const user = await auth.loggedUser(req.cookies, models);
@@ -38,7 +45,7 @@ const server = new ApolloServer({
 if (process.env.NODE_ENV !== 'test') {
   // only start if not in test env
   // see test folder for test server config
-  server.applyMiddleware({ app });
+  server.applyMiddleware({ app, cors: false });
   db.connect();
 
   app.listen({ port: PORT }, () =>

@@ -7,9 +7,17 @@ export default withApollo(
   ({ ctx, headers, initialState }) =>
     new ApolloClient({
       uri: process.env.NODE_ENV === 'development' ? endpoint : process.env.ENDPOINT,
-      cache: new InMemoryCache().restore(initialState || {}),
-      fetchOptions: {
-        credentials: 'include'
-      }
-    })
+      request: operation => {
+        operation.setContext({
+          fetchOptions: {
+            credentials: 'include'
+          },
+          headers
+        });
+      },
+      cache: new InMemoryCache().restore(initialState || {})
+    }),
+  {
+    getDataFromTree: 'ssr'
+  }
 );

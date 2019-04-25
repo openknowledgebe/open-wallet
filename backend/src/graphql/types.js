@@ -1,20 +1,17 @@
 const { gql } = require('apollo-server-express');
 
 module.exports = gql`
-  directive @constraint(
-    format: String
-    maxLength: Int
-    minLength: Int
-    required: Boolean
-  ) on INPUT_FIELD_DEFINITION
   directive @guest on FIELD_DEFINITION
   directive @auth on FIELD_DEFINITION
-  # types
 
+  # types
   type Query {
     users: [User]! @auth
     me: User @auth
+    myExpenses: [Transaction]! @auth
+    transactions: [Transaction]! @auth
   }
+
   type Mutation {
     register(user: UserInput!): User! @guest
     logout: Boolean!
@@ -62,9 +59,9 @@ module.exports = gql`
 
   #inputs
   input AdressInput {
-    street: String! @constraint(required: true)
-    city: String! @constraint(required: true)
-    country: String! @constraint(required: true)
+    street: String!
+    city: String!
+    country: String!
     zipCode: Int!
   }
 
@@ -74,26 +71,26 @@ module.exports = gql`
   }
 
   input UserInput {
-    name: String! @constraint(required: true)
-    password: String! @constraint(minLength: 8)
-    email: String! @constraint(format: "email")
+    name: String!
+    password: String!
+    email: String!
     bankDetails: BankDetailsInput
     address: AdressInput
   }
 
   input UserUpdateInput {
     name: String
-    password: String @constraint(minLength: 8)
-    email: String @constraint(format: "email")
+    password: String
+    email: String
     bankDetails: BankDetailsInput
     address: AdressInput
   }
 
   input Expense {
     amount: Float!
-    date: String @constraint(format: "date")
-    expDate: String @constraint(format: "date")
-    description: String! @constraint(required: true)
+    date: String
+    expDate: String
+    description: String!
     receipt: Upload!
     VAT: Int
   }

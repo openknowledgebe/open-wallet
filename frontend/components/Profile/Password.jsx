@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Divider, Button } from '@blueprintjs/core';
+import { Button, Card, Form } from 'semantic-ui-react';
 import { Mutation } from 'react-apollo';
 import { validateAll } from 'indicative';
 import useFormInput from '../hooks/useFormInput';
@@ -10,32 +10,36 @@ import { PASSWORD } from '../../lib/validation';
 
 const renderUI = (password, passwordRepeat, handleSubmit, save, loading) => {
   return (
-    <div>
-      <h2>Change password</h2>
-      <Divider />
-      <br />
-      <form method="post" onSubmit={e => handleSubmit(e, save)}>
-        <InputField
-          id="password"
-          label="Password"
-          value={password.value}
-          handler={password.onChange}
-          disabled={loading}
-          name="password"
-          type="password"
-        />
-        <InputField
-          id="password-repeat"
-          label="Confirm password"
-          value={passwordRepeat.value}
-          handler={passwordRepeat.onChange}
-          disabled={loading}
-          name="password-repeat"
-          type="password"
-        />
-        <Button type="submit">Save</Button>
-      </form>
-    </div>
+    <Card fluid>
+      <Card.Content>
+        <h2>Change password</h2>
+      </Card.Content>
+      <Card.Content>
+        <Form size="massive" loading={loading} method="post" onSubmit={e => handleSubmit(e, save)}>
+          <InputField
+            id="password"
+            label="Password"
+            value={password.value}
+            onChange={password.onChange}
+            disabled={loading}
+            name="password"
+            type="password"
+          />
+          <InputField
+            id="password-repeat"
+            label="Confirm password"
+            value={passwordRepeat.value}
+            onChange={passwordRepeat.onChange}
+            disabled={loading}
+            name="password-repeat"
+            type="password"
+          />
+          <Button size="massive" primary type="submit">
+            Save
+          </Button>
+        </Form>
+      </Card.Content>
+    </Card>
   );
 };
 

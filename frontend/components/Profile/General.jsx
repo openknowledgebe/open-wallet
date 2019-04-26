@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Divider, Button } from '@blueprintjs/core';
+import { Button, Card, Form } from 'semantic-ui-react';
 import { Mutation } from 'react-apollo';
 import { validateAll } from 'indicative';
 import InputField from '../commons/InputField';
@@ -41,19 +41,17 @@ const General = ({ name, email }) => {
       });
   };
 
-  const saveButton = loading => {
-    return (
-      <Button loading={loading} type="submit">
-        Save
-      </Button>
-    );
-  };
+  const saveButton = (
+    <Button primary size="big" type="submit">
+      Save
+    </Button>
+  );
 
   return (
-    <div>
-      <h2>General</h2>
-      <Divider />
-      <br />
+    <Card fluid>
+      <Card.Content>
+        <h2>General</h2>
+      </Card.Content>
       <Mutation
         mutation={UPDATE_ME}
         variables={{
@@ -65,22 +63,25 @@ const General = ({ name, email }) => {
         {/* TODO handle error */}
         {(save, { loading }) => {
           return (
-            <form
-              method="post"
-              onSubmit={e => {
-                handleNameSubmit(e, save);
-              }}
-            >
-              <InputField
-                id="name"
-                label="Name"
-                value={newName.value}
-                handler={newName.onChange}
-                disabled={loading}
-                name="name"
-                rightElement={saveButton(loading)}
-              />
-            </form>
+            <Card.Content>
+              <Form
+                size="massive"
+                loading={loading}
+                method="post"
+                onSubmit={e => {
+                  handleNameSubmit(e, save);
+                }}
+              >
+                <InputField
+                  id="up-profile-gen-name"
+                  label="Name"
+                  value={newName.value}
+                  onChange={newName.onChange}
+                  name="name"
+                  action={saveButton}
+                />
+              </Form>
+            </Card.Content>
           );
         }}
       </Mutation>
@@ -95,27 +96,29 @@ const General = ({ name, email }) => {
         {/* TODO handle error */}
         {(save, { loading }) => {
           return (
-            <form
-              method="post"
-              onSubmit={e => {
-                handleEmailSubmit(e, save);
-              }}
-            >
-              <InputField
-                id="email"
-                type="email"
-                label="Email"
-                value={newEmail.value}
-                handler={newEmail.onChange}
-                disabled={loading}
-                name="email"
-                rightElement={saveButton(loading)}
-              />
-            </form>
+            <Card.Content>
+              <Form
+                size="massive"
+                loading={loading}
+                method="post"
+                onSubmit={e => {
+                  handleEmailSubmit(e, save);
+                }}
+              >
+                <InputField
+                  id="up-profile-gen-email"
+                  label="Email"
+                  value={newEmail.value}
+                  onChange={newEmail.onChange}
+                  name="email"
+                  action={saveButton}
+                />
+              </Form>
+            </Card.Content>
           );
         }}
       </Mutation>
-    </div>
+    </Card>
   );
 };
 

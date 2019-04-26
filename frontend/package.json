@@ -11,8 +11,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@blueprintjs/core": "^3.14.1",
-    "@blueprintjs/icons": "^3.6.0",
     "@zeit/next-css": "^1.0.1",
     "apollo-boost": "^0.3.1",
     "eslint-plugin-react-hooks": "^1.6.0",
@@ -25,10 +23,13 @@
     "next-images": "^1.1.1",
     "next-with-apollo": "^3.4.0",
     "normalize.css": "^8.0.1",
+    "nprogress": "^0.2.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-apollo": "^2.5.3",
     "react-dom": "^16.8.4",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.86.0",
     "styled-components": "^4.2.0"
   },
   "devDependencies": {

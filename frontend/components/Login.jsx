@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { validateAll } from 'indicative';
-import { FormGroup, InputGroup, Button, Intent } from '@blueprintjs/core';
 import { Mutation } from 'react-apollo';
+import { Form } from 'semantic-ui-react';
+import InputField from './commons/InputField';
 import useFormInput from './hooks/useFormInput';
 import { LOG_ME_IN } from '../graphql/queries';
 import formatErrors from '../lib/formatErrors';
@@ -43,33 +44,33 @@ const Login = () => {
       {(login, { loading }) => {
         return (
           <div>
-            <form method="post" onSubmit={e => handleSubmit(e, login)}>
-              <FormGroup label="Email" labelFor="email" disabled={loading}>
-                <div>{errors.email}</div>
-                <InputGroup
-                  disabled={loading}
-                  large
-                  type="email"
-                  id="email"
-                  placeholder="Your email address"
-                  {...email}
-                />
-              </FormGroup>
-              <FormGroup label="Password" labelFor="password" disabled={loading}>
-                <div>{errors.password}</div>
-                <InputGroup
-                  disabled={loading}
-                  large
-                  type="password"
-                  id="password"
-                  placeholder="Your password"
-                  {...password}
-                />
-              </FormGroup>
-              <Button large type="submit" loading={loading} intent={Intent.PRIMARY}>
+            <Form
+              loading={loading}
+              size="massive"
+              method="post"
+              onSubmit={e => handleSubmit(e, login)}
+            >
+              <InputField
+                label="Email"
+                name="email"
+                type="email"
+                id="login-email"
+                placeholder="Your email address"
+                autoFocus
+                {...email}
+              />
+              <InputField
+                name="password"
+                label="Password"
+                type="password"
+                id="login-password"
+                placeholder="Your password"
+                {...password}
+              />
+              <Form.Button primary size="massive" type="submit">
                 Sign in
-              </Button>
-            </form>
+              </Form.Button>
+            </Form>
           </div>
         );
       }}

@@ -1,35 +1,33 @@
 import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Icon, Divider } from '@blueprintjs/core';
+import { Card, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
-const Header = styled.header`
+const Content = styled.div`
   display: flex;
-  justify-content: space-around;
-  margin-bottom: -10px;
   a {
+    margin-right: 30px;
     align-self: center;
   }
 `;
 
 const CardHeader = ({ backLink, title }) => {
   return (
-    <div>
-      <Header>
+    <Card.Content as="header">
+      <Content>
         {backLink && (
           <Link href={backLink}>
             <a>
               <h4>
-                <Icon icon="chevron-left" /> Home
+                <Icon name="chevron circle left" /> Home
               </h4>
             </a>
           </Link>
         )}
         <h1>{title}</h1>
-      </Header>
-      <Divider style={{ marginBottom: '15px' }} />
-    </div>
+      </Content>
+    </Card.Content>
   );
 };
 

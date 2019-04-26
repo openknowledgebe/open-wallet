@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Mutation } from 'react-apollo';
-import { Divider, Button } from '@blueprintjs/core';
+import { Button, Card, Form } from 'semantic-ui-react';
 import { validateAll } from 'indicative';
 import { UPDATE_ME } from '../../graphql/queries';
 import useFormInput from '../hooks/useFormInput';
@@ -11,32 +11,32 @@ import { required } from '../../lib/validation';
 
 const renderUI = (iban, bic, handleSubmit, save, loading) => {
   return (
-    <div>
-      <h2>My bank details</h2>
-      <Divider />
-      <br />
-      <form method="post" onSubmit={e => handleSubmit(e, save)}>
-        <InputField
-          id="iban"
-          label="IBAN"
-          value={iban.value}
-          handler={iban.onChange}
-          disabled={loading}
-          name="iban"
-        />
-        <InputField
-          id="bic"
-          label="BIC"
-          value={bic.value}
-          handler={bic.onChange}
-          disabled={loading}
-          name="bic"
-        />
-        <Button loading={loading} type="submit">
-          Save
-        </Button>
-      </form>
-    </div>
+    <Card fluid>
+      <Card.Content>
+        <h2>My bank details</h2>
+      </Card.Content>
+      <Card.Content>
+        <Form size="massive" loading={loading} method="post" onSubmit={e => handleSubmit(e, save)}>
+          <InputField
+            id="up-profile-bankdetails-iban"
+            label="IBAN"
+            value={iban.value}
+            onChange={iban.onChange}
+            name="iban"
+          />
+          <InputField
+            id="up-profile-bankdetails-bic"
+            label="BIC"
+            value={bic.value}
+            onChange={bic.onChange}
+            name="bic"
+          />
+          <Button primary size="massive" type="submit">
+            Save
+          </Button>
+        </Form>
+      </Card.Content>
+    </Card>
   );
 };
 

@@ -4,7 +4,8 @@ module.exports.connect = async () => {
   return mongoose
     .connect(process.env.MONGODB_URI, {
       dbName: process.env.DB_NAME,
-      useNewUrlParser: true
+      useNewUrlParser: true,
+      useFindAndModify: false
     })
     .then(async () => {
       console.log('DB connected successfully!');

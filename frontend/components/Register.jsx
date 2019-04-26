@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { FormGroup, InputGroup, Button, Intent } from '@blueprintjs/core';
-import { validateAll } from 'indicative';
+import { Form } from 'semantic-ui-react';
 import { Mutation } from 'react-apollo';
+import { validateAll } from 'indicative';
+import InputField from './commons/InputField';
 import useFormInput from './hooks/useFormInput';
 import { REGISTER_ME } from '../graphql/queries';
 import formatErrors from '../lib/formatErrors';
@@ -55,50 +56,48 @@ const Register = () => {
       {/* Alert email sent */}
       {(register, { loading }) => (
         <div>
-          <form method="post" onSubmit={e => handleSubmit(e, register)}>
-            <FormGroup label="Name" labelFor="reg-name" disabled={loading}>
-              <InputGroup
-                large
-                id="reg-name"
-                placeholder="Full name (e.g John Doe)"
-                {...name}
-                disabled={loading}
-              />
-            </FormGroup>
-            <FormGroup label="Email" labelFor="reg-email" disabled={loading}>
-              <InputGroup
-                large
-                type="email"
-                id="reg-email"
-                placeholder="Your email address"
-                {...email}
-                disabled={loading}
-              />
-            </FormGroup>
-            <FormGroup label="Password" labelFor="reg-password" disabled={loading}>
-              <InputGroup
-                large
-                type="password"
-                id="reg-password"
-                placeholder="Your password"
-                {...password}
-                disabled={loading}
-              />
-            </FormGroup>
-            <FormGroup label="Password Repeat" labelFor="reg-password-repeat" disabled={loading}>
-              <InputGroup
-                large
-                type="password"
-                id="reg-password-repeat"
-                placeholder="Your password a second time"
-                {...passwordRepeat}
-                disabled={loading}
-              />
-            </FormGroup>
-            <Button large type="submit" loading={loading} intent={Intent.PRIMARY}>
+          <Form
+            size="massive"
+            loading={loading}
+            method="post"
+            onSubmit={e => handleSubmit(e, register)}
+          >
+            <InputField
+              autoFocus
+              name="name"
+              label="First name"
+              id="reg-name"
+              placeholder="Full name (e.g John Doe)"
+              {...name}
+            />
+            <InputField
+              name="email"
+              label="Email"
+              type="email"
+              id="reg-email"
+              placeholder="Your email address"
+              {...email}
+            />
+            <InputField
+              name="password"
+              label="Password"
+              type="password"
+              id="reg-password"
+              placeholder="Your password"
+              {...password}
+            />
+            <InputField
+              name="password-repeat"
+              label="Password Repeat"
+              type="password"
+              id="reg-password-repeat"
+              placeholder="Confirm your password"
+              {...passwordRepeat}
+            />
+            <Form.Button primary size="massive" type="submit">
               Sign up
-            </Button>
-          </form>
+            </Form.Button>
+          </Form>
         </div>
       )}
     </Mutation>

@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { Card } from 'semantic-ui-react';
 import CenteredCard from '../components/CenteredCard';
 import Register from '../components/Register';
 import redirect from '../lib/redirect';
@@ -11,7 +12,9 @@ const RegisterPage = () => {
   return (
     <CenteredCard>
       <CardHeader backLink="/" title="Register" />
-      <Register />
+      <Card.Content>
+        <Register />
+      </Card.Content>
       <CardFooter>
         <Link href="/login">
           <a>Already registered?</a>

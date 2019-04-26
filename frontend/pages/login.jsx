@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import Page from '../components/Page';
+import { Card } from 'semantic-ui-react';
 import CenteredCard from '../components/CenteredCard';
 import Login from '../components/Login';
 import redirect from '../lib/redirect';
@@ -10,20 +10,20 @@ import CardHeader from '../components/CardHeader';
 
 const LoginPage = () => {
   return (
-    <Page>
-      <CenteredCard>
-        <CardHeader backLink="/" title="Login" />
+    <CenteredCard>
+      <CardHeader backLink="/" title="Login" />
+      <Card.Content>
         <Login />
-        <CardFooter>
-          <Link href="/register">
-            <a>No account yet?</a>
-          </Link>
-          <Link href="/">
-            <a>Password forgotten?</a>
-          </Link>
-        </CardFooter>
-      </CenteredCard>
-    </Page>
+      </Card.Content>
+      <CardFooter>
+        <Link href="/register">
+          <a>No account yet?</a>
+        </Link>
+        <Link href="/">
+          <a>Password forgotten?</a>
+        </Link>
+      </CardFooter>
+    </CenteredCard>
   );
 };
 

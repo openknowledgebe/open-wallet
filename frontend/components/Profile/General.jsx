@@ -1,18 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, Form } from 'semantic-ui-react';
 import { Mutation } from 'react-apollo';
+import { validateAll } from 'indicative';
 import InputField from '../commons/InputField';
 import useFormInput from '../hooks/useFormInput';
 import { UPDATE_ME } from '../../graphql/queries';
+import formatErrors from '../../lib/formatErrors';
+import { EMAIL, required } from '../../lib/validation';
 
 const General = ({ name, email }) => {
   const newName = useFormInput(name);
   const newEmail = useFormInput(email);
+  const [errors, setErrors] = useState();
 
-  const onSubmit = (e, save) => {
+  const handleNameSubmit = (e, save) => {
     e.preventDefault();
-    save();
+    const nameValidarion = required('Name');
+    const data = { name: newName.value };
+
+    validateAll(data, nameValidarion.rule, nameValidarion.message)
+      .then(() => {
+        save();
+      })
+      .catch(errs => {
+        setErrors(formatErrors(errs));
+      });
+  };
+
+  const handleEmailSubmit = (e, save) => {
+    e.preventDefault();
+    const data = { email: newEmail.value };
+
+    validateAll(data, { email: EMAIL.rule }, EMAIL.messages)
+      .then(() => {
+        save();
+      })
+      .catch(errs => {
+        setErrors(formatErrors(errs));
+      });
   };
 
   const saveButton = (
@@ -43,7 +69,7 @@ const General = ({ name, email }) => {
                 loading={loading}
                 method="post"
                 onSubmit={e => {
-                  onSubmit(e, save);
+                  handleNameSubmit(e, save);
                 }}
               >
                 <InputField
@@ -76,7 +102,7 @@ const General = ({ name, email }) => {
                 loading={loading}
                 method="post"
                 onSubmit={e => {
-                  onSubmit(e, save);
+                  handleEmailSubmit(e, save);
                 }}
               >
                 <InputField

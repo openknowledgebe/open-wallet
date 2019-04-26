@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Server - e2e All users requires to be logged in 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You must be logged in.",
+      "path": Array [
+        "users",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Server - e2e Login fails on incorrect email 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Incorrect email or password. Please try again.",
+      "path": Array [
+        "login",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Server - e2e Login fails on incorrect password 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Incorrect email or password. Please try again.",
+      "path": Array [
+        "login",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Server - e2e Login succeeds 1`] = `
+Object {
+  "data": Object {
+    "login": Object {
+      "id": "5ca36073a89e1e5c7ad111af",
+      "name": "Sylvie Delcourt",
+    },
+  },
+}
+`;
+
+exports[`Server - e2e Me query fails when user not logged in 1`] = `
+Object {
+  "data": Object {
+    "me": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You must be logged in.",
+      "path": Array [
+        "me",
+      ],
+    },
+  ],
+}
+`;

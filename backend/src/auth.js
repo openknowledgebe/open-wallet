@@ -1,28 +1,34 @@
 const { AuthenticationError } = require('apollo-server-express');
 const jwt = require('jsonwebtoken');
-const User = require('./models/user');
 
-const { APP_SECRET } = process.env;
+const { APP_SECRET = 'mysecret' } = process.env;
+
+const { MUST_LOGIN, MUST_LOGOUT, WRONG_EMAIL_PASSWORD } = require('./messages');
 
 /**
  * Retrieves the cookie and returns the bearer data.
  *
  * @param {object} req - HTTP request
+ * @param {object} models - Models provider, must have a User model
  * @returns {Promise} Promise object represents the user
  */
-const loggedUser = async ({ token }) => {
+const loggedUser = async ({ token }, { User }) => {
   if (token) {
     // Verify the token
-    const { userId } = jwt.verify(token, APP_SECRET);
-    // Get the user
-    return userId && User.findById(userId);
+    try {
+      const { userId } = jwt.verify(token, APP_SECRET);
+      // Get the user
+      return userId && User.findById(userId);
+    } catch (e) {
+      return null;
+    }
   }
   return null;
 };
 
 /**
  * Returns whether a user is logged in or not.
- * @param { User } user - logged in user
+ * @param { object } user - logged in user
  * @returns {boolean} True of false
  */
 const loggedIn = ({ user }) => !!user;
@@ -33,7 +39,7 @@ const loggedIn = ({ user }) => !!user;
  */
 const ensureLoggedIn = ctx => {
   if (!loggedIn(ctx)) {
-    throw new AuthenticationError('You must be logged in.');
+    throw new AuthenticationError(MUST_LOGIN);
   }
 };
 
@@ -43,7 +49,7 @@ const ensureLoggedIn = ctx => {
  */
 const ensureLoggedOut = ctx => {
   if (loggedIn(ctx)) {
-    throw new AuthenticationError('You must be logged out.');
+    throw new AuthenticationError(MUST_LOGOUT);
   }
 };
 
@@ -53,17 +59,16 @@ const ensureLoggedOut = ctx => {
  * @param {string} email - email provided by the user
  * @param {string} password - password provided by the user
  * @param {object} res - HTTP response
+ * @param {User} User - User model
  * @return {object} User
  * @throws {AuthenticationError}
  */
-const attemptLogin = async (email, password, res) => {
-  const message = 'Incorrect email or password. Please try again.';
-
+const attemptLogin = async (email, password, res, User) => {
   const user = await User.findByEmail(email);
   // compare provided password against stored password
   const isCorrect = user && (await new User(user).rightPassword(password));
   if (!isCorrect) {
-    throw new AuthenticationError(message);
+    throw new AuthenticationError(WRONG_EMAIL_PASSWORD);
   }
   // generate JWT
   const token = jwt.sign({ userId: user.id }, APP_SECRET);
@@ -76,7 +81,7 @@ const attemptLogin = async (email, password, res) => {
 };
 
 /**
- * Clears the cookie and returns true
+ * Clears the cookie and returns true.
  * @param {*} res - HTTP response
  * @returns {boolean} Always true
  */

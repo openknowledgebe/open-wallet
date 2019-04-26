@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Card, Form } from 'semantic-ui-react';
 import { Mutation } from 'react-apollo';
+import { validateAll } from 'indicative';
 import useFormInput from '../hooks/useFormInput';
-import samePassword from '../../lib/samePassword';
 import { UPDATE_ME } from '../../graphql/queries';
 import InputField from '../commons/InputField';
+import formatErrors from '../../lib/formatErrors';
+import { PASSWORD } from '../../lib/validation';
 
-const renderUI = (password, passwordRepeat, onSubmit, save, loading) => {
+const renderUI = (password, passwordRepeat, handleSubmit, save, loading) => {
   return (
     <Card fluid>
       <Card.Content>
         <h2>Change password</h2>
       </Card.Content>
       <Card.Content>
-        <Form size="massive" loading={loading} method="post" onSubmit={e => onSubmit(e, save)}>
+        <Form size="massive" loading={loading} method="post" onSubmit={e => handleSubmit(e, save)}>
           <InputField
             id="password"
             label="Password"
@@ -44,6 +46,7 @@ const renderUI = (password, passwordRepeat, onSubmit, save, loading) => {
 const Password = () => {
   const password = useFormInput('');
   const passwordRepeat = useFormInput('');
+  const [errors, setErrors] = useState();
 
   const variables = {
     user: {
@@ -51,17 +54,32 @@ const Password = () => {
     }
   };
 
-  const onSubmit = (e, save) => {
+  const handleSubmit = (e, save) => {
     e.preventDefault();
-    if (samePassword(password.value, passwordRepeat.value)) {
-      save();
-    }
+
+    const data = { password: password.value, password_confirmation: passwordRepeat.value };
+
+    const rules = {
+      password: PASSWORD.rule
+    };
+
+    const messages = {
+      ...PASSWORD.messages
+    };
+
+    validateAll(data, rules, messages)
+      .then(() => {
+        save();
+      })
+      .catch(errs => {
+        setErrors(formatErrors(errs));
+      });
   };
 
   return (
     <Mutation mutation={UPDATE_ME} variables={variables}>
       {/* TODO handle error */}
-      {(save, { loading }) => renderUI(password, passwordRepeat, onSubmit, save, loading)}
+      {(save, { loading }) => renderUI(password, passwordRepeat, handleSubmit, save, loading)}
     </Mutation>
   );
 };

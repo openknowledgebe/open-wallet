@@ -1,15 +1,12 @@
-const User = require('../../models/user');
-const { attemptLogin, attemptLogout } = require('../../auth');
-
 module.exports = {
-  register: async (_, { user }) => User(user).save(),
-  logout: (_, args, { res }) => {
-    return attemptLogout(res);
+  register: async (_, { user }, { models: { User } }) => User(user).save(),
+  logout: (_, args, { res, auth }) => {
+    return auth.attemptLogout(res);
   },
-  login: async (_, { email, password }, { res }) => {
-    return attemptLogin(email, password, res);
+  login: async (_, { email, password }, { res, models: { User }, auth }) => {
+    return auth.attemptLogin(email, password, res, User);
   },
-  updateProfile: async (_, args, { user }) => {
+  updateProfile: async (_, args, { user, models: { User } }) => {
     const { email } = args.user;
     if (email) {
       if (user.email === email) {

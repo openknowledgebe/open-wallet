@@ -1,3 +1,10 @@
+const {
+  validate,
+  registerValidation,
+  updateProfileValidation,
+  expenseValidation
+} = require('../../lib/validation');
+
 const store = (file, tags, folder, cloudinary) =>
   new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream({ tags, folder }, (err, image) => {
@@ -10,7 +17,12 @@ const store = (file, tags, folder, cloudinary) =>
   });
 
 module.exports = {
-  register: async (_, { user }, { models: { User } }) => User(user).save(),
+  register: async (_, { user }, { models: { User } }) => {
+    const { formatData, rules, messages } = registerValidation;
+    await validate(formatData({ ...user }), rules, messages);
+
+    return User(user).save();
+  },
   logout: (_, args, { res, auth }) => {
     return auth.attemptLogout(res);
   },
@@ -22,10 +34,14 @@ module.exports = {
     { expense },
     { user, models: { Transaction, User }, cloudinary, db }
   ) => {
+    expense.date = expense.date || Date.now();
+
+    const { formatData, rules, messages } = expenseValidation;
+    await validate(formatData({ ...expense }), rules, messages);
+
     expense.user = user.id;
     expense.flow = 'IN';
     expense.type = 'EXPENSE';
-    expense.date = expense.date || Date.now();
     const receipt = await expense.receipt;
 
     const session = await db.startSession();
@@ -39,7 +55,7 @@ module.exports = {
       session.startTransaction();
 
       // save the expense
-      tr = await Transaction(expense).save(opts);
+      tr = await new Transaction(expense).save(opts);
 
       // save the transaction id in the user's expenses
       const myExpenses = user.expenses || [];
@@ -61,15 +77,13 @@ module.exports = {
     return tr;
   },
   updateProfile: async (_, args, { user, models: { User } }) => {
+    const { formatData, rules, messages } = updateProfileValidation;
+    await validate(formatData({ ...args.user }), rules, messages);
     const { email } = args.user;
-    if (email) {
-      if (user.email === email) {
-        delete args.user.email;
-      } else {
-        const emailAlreadyUsed = User.findByEmail(email);
-        if (emailAlreadyUsed) {
-          throw new Error('Email already exists!');
-        }
+    if (email && user.email !== email) {
+      const emailAlreadyUsed = await User.findByEmail(email);
+      if (emailAlreadyUsed) {
+        throw new Error('Email already exists!');
       }
     }
     return User.findOneAndUpdate({ _id: user.id }, args.user, { new: true });

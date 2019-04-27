@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
@@ -56,13 +58,13 @@ const MyAccount = ({ isAuthenticated }) => {
         <Modal.Content>
           <InnerDialog>
             <Link href="/login">
-              <a>Login</a>
+              <a onClick={() => setDialogStatus(!isOpen)}>Login</a>
             </Link>
             <br />
             or
             <br />
             <Link href="/register">
-              <a>Register</a>
+              <a onClick={() => setDialogStatus(!isOpen)}>Register</a>
             </Link>
             <br />
           </InnerDialog>

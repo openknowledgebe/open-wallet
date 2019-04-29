@@ -42,7 +42,7 @@ const Login = () => {
   return (
     <Mutation mutation={LOG_ME_IN} variables={{ email: email.value, password: password.value }}>
       {(login, { loading, error, data }) => {
-        if (data) return Router.push('/profile');
+        if (data) Router.push('/profile');
         return (
           <div>
             <Form

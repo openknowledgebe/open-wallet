@@ -23,3 +23,12 @@ export const EMAIL = {
   },
   rule: 'required|email'
 };
+
+export const NON_NEGATIVE = {
+  message: 'The value cannot be negative',
+  rule: 'above:-1'
+};
+
+export const validateFile = file => {
+  // TODO
+};

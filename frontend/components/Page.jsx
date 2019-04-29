@@ -22,7 +22,9 @@ const Page = ({ children }) => {
             <Link href="/dashboard" passHref>
               <Menu.Item as="a">Dashboard</Menu.Item>
             </Link>
-            <Menu.Item as="a">Expenses</Menu.Item>
+            <Link passHref href="/expenses">
+              <Menu.Item as="a">Expenses</Menu.Item>
+            </Link>
             <Menu.Menu position="right">
               <Link passHref href="/profile">
                 <Menu.Item as="a">Profile</Menu.Item>

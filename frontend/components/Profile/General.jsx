@@ -8,18 +8,31 @@ import useFormInput from '../hooks/useFormInput';
 import { UPDATE_ME } from '../../graphql/queries';
 import formatErrors from '../../lib/formatErrors';
 import { EMAIL, required } from '../../lib/validation';
+import ErrorMessage from '../commons/ErrorMessage';
+import SuccessMessage from '../commons/SuccessMessage';
 
 const General = ({ name, email }) => {
   const newName = useFormInput(name);
   const newEmail = useFormInput(email);
-  const [errors, setErrors] = useState();
+  const [errors, setErrors] = useState({});
+  const [messages, setMessages] = useState({});
+
+  const succesMessage = fieldName => `Your ${fieldName} has been saved!`;
+  const handleCompleted = fieldName => {
+    setMessages({ success: succesMessage(fieldName) });
+  };
+  const handleErrored = error => {
+    setMessages({ error });
+  };
 
   const handleNameSubmit = (e, save) => {
     e.preventDefault();
-    const nameValidarion = required('Name');
+    setErrors({});
+    setMessages({});
+    const nameValidation = required('Name');
     const data = { name: newName.value };
 
-    validateAll(data, nameValidarion.rule, nameValidarion.message)
+    validateAll(data, nameValidation.rule, nameValidation.message)
       .then(() => {
         save();
       })
@@ -30,6 +43,8 @@ const General = ({ name, email }) => {
 
   const handleEmailSubmit = (e, save) => {
     e.preventDefault();
+    setErrors({});
+    setMessages({});
     const data = { email: newEmail.value };
 
     validateAll(data, { email: EMAIL.rule }, EMAIL.messages)
@@ -52,6 +67,18 @@ const General = ({ name, email }) => {
       <Card.Content>
         <h2>General</h2>
       </Card.Content>
+
+      {messages.error && (
+        <Card.Content>
+          <ErrorMessage error={messages.error} />
+        </Card.Content>
+      )}
+      {messages.success && (
+        <Card.Content>
+          <SuccessMessage message={messages.success} />
+        </Card.Content>
+      )}
+
       <Mutation
         mutation={UPDATE_ME}
         variables={{
@@ -59,6 +86,10 @@ const General = ({ name, email }) => {
             name: newName.value
           }
         }}
+        onCompleted={() => {
+          handleCompleted('Name');
+        }}
+        onError={handleErrored}
       >
         {/* TODO handle error */}
         {(save, { loading }) => {
@@ -77,6 +108,7 @@ const General = ({ name, email }) => {
                   label="Name"
                   value={newName.value}
                   onChange={newName.onChange}
+                  errorMessage={errors.name}
                   name="name"
                   action={saveButton}
                 />
@@ -92,6 +124,10 @@ const General = ({ name, email }) => {
             email: newEmail.value
           }
         }}
+        onCompleted={() => {
+          handleCompleted('Email');
+        }}
+        onError={handleErrored}
       >
         {/* TODO handle error */}
         {(save, { loading }) => {
@@ -110,6 +146,7 @@ const General = ({ name, email }) => {
                   label="Email"
                   value={newEmail.value}
                   onChange={newEmail.onChange}
+                  errorMessage={errors.email}
                   name="email"
                   action={saveButton}
                 />

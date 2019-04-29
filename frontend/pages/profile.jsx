@@ -15,8 +15,6 @@ const ProfilePage = () => {
 ProfilePage.getInitialProps = async context => {
   const { loggedInUser } = await checkLoggedIn(context.apolloClient);
   if (!loggedInUser.me) {
-    // Already logged in? No need to continue.
-    // Throw them back to the main page
     redirect(context, '/login');
   }
 

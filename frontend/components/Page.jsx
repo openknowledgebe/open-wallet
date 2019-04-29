@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { Container, Menu, Sticky, Icon } from 'semantic-ui-react';
+import Logout from './Logout';
 
 const Page = ({ children }) => {
   return (
@@ -29,7 +30,7 @@ const Page = ({ children }) => {
               <Link passHref href="/profile">
                 <Menu.Item as="a">Profile</Menu.Item>
               </Link>
-              <Menu.Item as="a">Logout</Menu.Item>
+              <Logout />
             </Menu.Menu>
           </Container>
 

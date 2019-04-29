@@ -59,3 +59,9 @@ export const EXPENSE_CLAIM = gql`
     }
   }
 `;
+
+export const LOG_ME_OUT = gql`
+  mutation {
+    logout
+  }
+`;

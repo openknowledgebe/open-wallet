@@ -22,7 +22,7 @@ const InputField = ({
     <Form.Field error={!!errorMessage}>
       <label htmlFor={id}>{label}</label>
       <Input
-        labelPosition="right"
+        labelPosition={children && 'right'}
         id={id}
         required={isRequired}
         placeholder={placeholder}

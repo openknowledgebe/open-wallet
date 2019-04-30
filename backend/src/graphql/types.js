@@ -57,6 +57,20 @@ module.exports = gql`
     type: TransactionType!
   }
 
+  type Category {
+    id: ID!
+    name: String!
+  }
+
+  type Company {
+    name: String!
+    email: String
+    phone: String
+    VAT: String
+    bankDetails: BankDetails
+    address: Address
+  }
+
   #inputs
   input AdressInput {
     street: String!

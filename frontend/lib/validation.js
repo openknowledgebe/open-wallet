@@ -29,6 +29,11 @@ export const NON_NEGATIVE = {
   rule: 'above:-1'
 };
 
+export const DATE = {
+  message: 'Please provide a valid date',
+  rule: 'date'
+};
+
 export const validateFile = file => {
   // TODO
 };

@@ -7,7 +7,7 @@ import InputField from './commons/InputField';
 import formatErrors from '../lib/formatErrors';
 import useFormFields from './hooks/useFormFields';
 import useInputFile from './hooks/useInputFile';
-import { validateFile, NON_NEGATIVE, required } from '../lib/validation';
+import { validateFile, NON_NEGATIVE, DATE, required } from '../lib/validation';
 import { EXPENSE_CLAIM } from '../graphql/queries';
 import SuccessMessage from './commons/SuccessMessage';
 import ErrorMessage from './commons/ErrorMessage';
@@ -66,6 +66,15 @@ const renderUI = (expense, receipt, errors, success, error, handleSubmit, save, 
             <Label style={{ fontSize: 'inherit' }}>€</Label>
           </InputField>
           <InputField
+            type="date"
+            name="date"
+            label="Date"
+            id="expense-form-date"
+            value={expense.fields.date}
+            onChange={expense.onChange}
+            errorMessage={errors.date}
+          />
+          <InputField
             type="number"
             name="VAT"
             label="VAT"
@@ -94,7 +103,8 @@ const ExpenseForm = () => {
     receipt: receipt.file.file,
     amount: expense.fields.amount ? parseFloat(expense.fields.amount) : undefined,
     description: expense.fields.description,
-    VAT: expense.fields.VAT ? parseInt(expense.fields.VAT, 10) : undefined
+    VAT: expense.fields.VAT ? parseInt(expense.fields.VAT, 10) : undefined,
+    date: expense.fields.date
   };
   const handleSubmit = (e, claim) => {
     e.preventDefault();
@@ -107,13 +117,15 @@ const ExpenseForm = () => {
     const messages = {
       ...descriptionValidation.message,
       ...amountRequired.message,
-      above: NON_NEGATIVE.message
+      above: NON_NEGATIVE.message,
+      date: DATE.message
     };
 
     const rules = {
       ...descriptionValidation.rule,
       amount: `${amountRequired.rule.amount}|${NON_NEGATIVE.rule}`,
-      VAT: NON_NEGATIVE.rule
+      VAT: NON_NEGATIVE.rule,
+      date: DATE.rule
     };
 
     validateAll(variables, rules, messages)

@@ -1,8 +1,8 @@
 /* eslint-disable func-names */
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const Address = require('./address');
-const BankDetails = require('./bankDetails');
+const address = require('./address');
+const bankDetails = require('./bankDetails');
 
 const { Schema } = mongoose;
 
@@ -20,8 +20,8 @@ const userSchema = new Schema({
     trim: true,
     lowercase: true
   },
-  address: Address,
-  bankDetails: BankDetails,
+  address,
+  bankDetails,
   expenses: [
     {
       type: Schema.Types.ObjectId,

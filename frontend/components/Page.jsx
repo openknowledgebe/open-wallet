@@ -7,9 +7,9 @@ import Logout from './Logout';
 
 const Page = ({ children }) => {
   return (
-    <Container fluid>
+    <div>
       <Menu
-        style={{ fontSize: 'inherit', marginRight: 0, position: 'sticky', top: 0, zIndex: 5 }}
+        style={{ fontSize: 'inherit', marginRight: 0, position: 'sticky', top: 0, zIndex: 2000 }}
         inverted
       >
         <Link href="/" passHref>
@@ -47,7 +47,7 @@ const Page = ({ children }) => {
         </Menu.Item>
       </Menu>
       <Container>{children}</Container>
-    </Container>
+    </div>
   );
 };
 

@@ -15,7 +15,7 @@ import InfoMessage from './commons/InfoMessage';
 
 const renderUI = (expense, receipt, errors, success, error, handleSubmit, save, loading) => {
   return (
-    <Card fluid>
+    <Card fluid raised>
       <Card.Content>
         <h2>Submit an expense</h2>
       </Card.Content>

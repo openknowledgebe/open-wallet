@@ -63,7 +63,7 @@ const General = ({ name, email }) => {
   );
 
   return (
-    <Card fluid>
+    <Card fluid style={{ height: '100%' }} raised>
       <Card.Content>
         <h2>General</h2>
       </Card.Content>
@@ -132,7 +132,7 @@ const General = ({ name, email }) => {
         {/* TODO handle error */}
         {(save, { loading }) => {
           return (
-            <Card.Content>
+            <Card.Content style={{ height: '100%' }}>
               <Form
                 size="massive"
                 loading={loading}

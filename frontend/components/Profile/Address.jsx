@@ -97,11 +97,11 @@ Address.propTypes = {
 
 const UI = ({ address, errors, success, error, handleSubmit, loading, save }) => {
   return (
-    <Card fluid>
+    <Card fluid raised style={{ height: '100%' }}>
       <Card.Content>
         <h2>My address</h2>
       </Card.Content>
-      <Card.Content>
+      <Card.Content style={{ height: '100%' }}>
         <Form
           size="massive"
           success={success}

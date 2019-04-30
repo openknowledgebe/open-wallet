@@ -21,11 +21,11 @@ const renderUI = (
   loading
 ) => {
   return (
-    <Card fluid>
+    <Card fluid style={{ height: '100%' }} raised>
       <Card.Content>
         <h2>Change password</h2>
       </Card.Content>
-      <Card.Content>
+      <Card.Content style={{ height: '100%' }}>
         <Form
           size="massive"
           success={success}

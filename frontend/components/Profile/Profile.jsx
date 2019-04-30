@@ -10,17 +10,17 @@ const Profile = ({ user }) => {
   const { address, bankDetails } = user;
 
   return (
-    <Grid padded>
-      <Grid.Column mobile={16} tablet={8} computer={8} largeScreen={8}>
+    <Grid stackable columns={2}>
+      <Grid.Column>
         <General name={user.name} email={user.email} />
       </Grid.Column>
-      <Grid.Column mobile={16} tablet={8} computer={8} largeScreen={8}>
+      <Grid.Column>
         <Address address={address} />
       </Grid.Column>
-      <Grid.Column mobile={16} tablet={8} computer={8} largeScreen={8}>
+      <Grid.Column>
         <BankDetails bankDetails={bankDetails} />
       </Grid.Column>
-      <Grid.Column mobile={16} tablet={8} computer={8} largeScreen={8}>
+      <Grid.Column>
         <Password />
       </Grid.Column>
     </Grid>

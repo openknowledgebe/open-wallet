@@ -13,11 +13,11 @@ import SuccessMessage from '../commons/SuccessMessage';
 
 const renderUI = (iban, bic, errors, success, error, handleSubmit, save, loading) => {
   return (
-    <Card fluid>
+    <Card fluid style={{ height: '100%' }} raised>
       <Card.Content>
         <h2>My bank details</h2>
       </Card.Content>
-      <Card.Content>
+      <Card.Content style={{ height: '100%' }}>
         <Form
           size="massive"
           error={!!error}

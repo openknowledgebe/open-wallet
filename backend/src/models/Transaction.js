@@ -11,10 +11,12 @@ const transactionSchema = new Schema({
     type: String // should be ObjectId
   },
   company: {
-    type: String // should be ObjectId
+    type: Schema.Types.ObjectId,
+    ref: 'Company'
   },
   category: {
-    type: String // should be ObjectId
+    type: Schema.Types.ObjectId,
+    ref: 'Category'
   },
   user: {
     type: Schema.Types.ObjectId,

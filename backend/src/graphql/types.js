@@ -45,6 +45,8 @@ module.exports = gql`
 
   type Transaction {
     id: ID!
+    category: Category
+    company: Company
     flow: Flow!
     state: State!
     user: User!
@@ -103,7 +105,6 @@ module.exports = gql`
   input Expense {
     amount: Float!
     date: String
-    expDate: String
     description: String!
     receipt: Upload!
     VAT: Int

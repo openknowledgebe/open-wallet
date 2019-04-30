@@ -12,6 +12,7 @@ module.exports.connect = async () => {
       await mongoose.connection.createCollection('users');
       await mongoose.connection.createCollection('transactions');
       await mongoose.connection.createCollection('categories');
+      await mongoose.connection.createCollection('companies');
       console.log('Collections created successfully!');
     })
     .catch(err => {

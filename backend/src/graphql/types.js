@@ -110,6 +110,25 @@ module.exports = gql`
     VAT: Int
   }
 
+  input InvoiceUpload {
+    amount: Float!
+    date: String
+    category: String
+    company: CompanyInput
+    expDate: String
+    invoice: Upload!
+    VAT: Int
+  }
+
+  input CompanyInput {
+    name: String!
+    email: String
+    phone: String
+    VAT: String
+    bankDetails: BankDetailsInput
+    address: AdressInput
+  }
+
   #enums
   enum Flow {
     IN

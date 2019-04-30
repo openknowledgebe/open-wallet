@@ -63,7 +63,7 @@ const renderUI = (expense, receipt, errors, success, error, handleSubmit, save, 
             errorMessage={errors.amount}
           >
             <input />
-            <Label style={{ fontSize: 'inherit', display: 'flex', alignItems: 'center' }}>€</Label>
+            <Label style={{ fontSize: 'inherit' }}>€</Label>
           </InputField>
           <InputField
             type="number"
@@ -75,7 +75,7 @@ const renderUI = (expense, receipt, errors, success, error, handleSubmit, save, 
             errorMessage={errors.VAT}
           >
             <input />
-            <Label style={{ fontSize: 'inherit', display: 'flex', alignItems: 'center' }}>%</Label>
+            <Label style={{ fontSize: 'inherit' }}>%</Label>
           </InputField>
           <Button type="submit" primary size="massive">
             Claim

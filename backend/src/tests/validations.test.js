@@ -1,11 +1,104 @@
 const { UserInputError } = require('apollo-server-express');
 const {
-  validation: { registerValidation, validate }
+  validation: { registerValidation, updateProfileValidation, expenseValidation, validate }
 } = require('../');
 
 const FIFTYONECHARSSTR = 'QYE5TOXWrDbi0bSQDbM1KmKOljjR5SihgUJO7aDwkkjUJVJOzk6';
 
-describe('EXPENSE CLAIM VALIDATION', () => {});
+/**
+ * Test of input validation module
+ *
+ * Notes:
+ * 1. GraphQL will detect undefined values and reject them
+ * 2. GraphQL won't allow null for Numbers (Int/Float)
+ * 3. GraphQL allows null value for strings
+ * 4. GraphQL will make sure required fields have values (but allows empty string)
+ */
+
+describe('EXPENSE CLAIM VALIDATION', () => {
+  const { messages, rules } = expenseValidation;
+  const expense = {
+    VAT: 21,
+    amount: 10,
+    date: Date.now(),
+    description: 'Hello World!'
+  };
+
+  it('will pass validation (minimum required fields)', async () => {
+    await validate({ description: expense.description, amount: expense.amount }, rules, messages);
+  });
+
+  it('will pass validation (all required fields)', async () => {
+    await validate(expense, rules, messages);
+  });
+
+  it('fails if description not set', async () => {
+    try {
+      // {} is equivalent to description = null
+      await validate({}, rules, messages);
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err[0].description).toBeTruthy();
+      } else throw error;
+    }
+    try {
+      await validate({ description: undefined }, rules, messages);
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err[0].description).toBeTruthy();
+      } else throw error;
+    }
+    try {
+      await validate({ description: '' }, rules, messages);
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err[0].description).toBeTruthy();
+      } else throw error;
+    }
+  });
+
+  it('fails on max length exceeded', async () => {
+    try {
+      await validate({ description: FIFTYONECHARSSTR }, rules, messages);
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err[0].description).toBeTruthy();
+      } else throw error;
+    }
+  });
+
+  it('fails on max length exceeded', async () => {
+    try {
+      await validate({ description: FIFTYONECHARSSTR }, rules, messages);
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err[0].description).toBeTruthy();
+      } else throw error;
+    }
+  });
+
+  it('fails on invalid date', async () => {
+    try {
+      await validate({ description: expense.description, date: 'fefle' }, rules, messages);
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err[0].date).toBeTruthy();
+      } else throw error;
+    }
+  });
+});
 describe('REGISTER VALIDATION', () => {
   const { rules, messages } = registerValidation;
   const user = {
@@ -176,5 +269,35 @@ describe('REGISTER VALIDATION', () => {
     }
   });
 });
-describe('UPDATE PROFILE VALIDATION', () => {});
+describe('UPDATE PROFILE VALIDATION', () => {
+  // most cases have been tested in REGISTER VALIDATION
+  const { formatData, messages, rules } = updateProfileValidation;
+  it('does not require any field', async () => {
+    await validate(formatData({}), rules, messages);
+  });
+
+  it('throws on empty string', async () => {
+    try {
+      await validate(formatData({ email: '', name: '', password: '' }), rules, messages);
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err).toHaveLength(3);
+      } else throw error;
+    }
+  });
+
+  it('throws on null value', async () => {
+    try {
+      await validate(formatData({ email: null, name: null, password: null }), rules, messages);
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err).toHaveLength(3);
+      } else throw error;
+    }
+  });
+});
 describe('UPLOAD INVOICE VALIDATION', () => {});

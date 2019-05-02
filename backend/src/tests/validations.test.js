@@ -1,9 +1,13 @@
 const { UserInputError } = require('apollo-server-express');
 const {
-  validation: { registerValidation, updateProfileValidation, expenseValidation, validate }
+  validation: {
+    registerValidation,
+    updateProfileValidation,
+    expenseValidation,
+    uploadInvoiceValidation,
+    validate
+  }
 } = require('../');
-
-const FIFTYONECHARSSTR = 'QYE5TOXWrDbi0bSQDbM1KmKOljjR5SihgUJO7aDwkkjUJVJOzk6';
 
 /**
  * Test of input validation module
@@ -14,6 +18,17 @@ const FIFTYONECHARSSTR = 'QYE5TOXWrDbi0bSQDbM1KmKOljjR5SihgUJO7aDwkkjUJVJOzk6';
  * 3. GraphQL allows null value for strings
  * 4. GraphQL will make sure required fields have values (but allows empty string)
  */
+const address = {
+  street: 'My Street 31',
+  city: 'My City',
+  country: 'My Country',
+  zipCode: 1000
+};
+const bankDetails = {
+  iban: 'MY IBAN',
+  bic: 'MY BIC'
+};
+const FIFTYONECHARSSTR = 'QYE5TOXWrDbi0bSQDbM1KmKOljjR5SihgUJO7aDwkkjUJVJOzk6';
 
 describe('EXPENSE CLAIM VALIDATION', () => {
   const { messages, rules } = expenseValidation;
@@ -105,16 +120,8 @@ describe('REGISTER VALIDATION', () => {
     email: 'test@mail.com',
     name: 'Test Test',
     password: 'azerty1234',
-    address: {
-      street: 'My Street 31',
-      city: 'My City',
-      country: 'My Country',
-      zipCode: 1000
-    },
-    bankDetails: {
-      iban: 'MY IBAN',
-      bic: 'MY BIC'
-    }
+    address,
+    bankDetails
   };
   it("doesn't throw (minimal config)", async () => {
     const data = {
@@ -300,4 +307,84 @@ describe('UPDATE PROFILE VALIDATION', () => {
     }
   });
 });
-describe('UPLOAD INVOICE VALIDATION', () => {});
+describe('UPLOAD INVOICE VALIDATION', () => {
+  const { formatData, messages, rules } = uploadInvoiceValidation;
+  const invoice = {
+    company: {
+      address,
+      bankDetails,
+      name: 'OKBE',
+      VAT: 'BE0000000000',
+      phone: '0483473742'
+    },
+    phone: '0483473741',
+    VAT: 21,
+    amount: 10,
+    date: Date.now(),
+    expDate: Date.now()
+  };
+
+  it('passes validation with minial required fields', async () => {
+    await validate(formatData({}), rules, messages);
+  });
+
+  it('passes validation with full fields', async () => {
+    await validate(formatData(invoice), rules, messages);
+  });
+
+  it('fails on invalid date', async () => {
+    try {
+      await validate(formatData({ date: 'eeee', expDate: 'eeee' }), rules, messages);
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err).toHaveLength(2);
+      } else throw error;
+    }
+  });
+
+  it('fails on negative value', async () => {
+    try {
+      await validate(formatData({ amount: -1, VAT: -1 }), rules, messages);
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err).toHaveLength(2);
+      } else throw error;
+    }
+  });
+
+  // TODO make this describe a root
+  describe('COMPANY VALIDATION', () => {
+    // Address & BankDetails are tested in REGISTER VALIDATION
+    it('passes with minimal required fields', async () => {
+      await validate(formatData({ company: { name: 'OKBE' } }), rules, messages);
+    });
+    it('passes with full fields', async () => {
+      await validate(formatData({ company: invoice.company }), rules, messages);
+    });
+    it('fails on max length exceeded', async () => {
+      try {
+        await validate(
+          formatData({
+            company: {
+              name: FIFTYONECHARSSTR,
+              VAT: `${invoice.company.VAT}1`,
+              phone: FIFTYONECHARSSTR
+            }
+          }),
+          rules,
+          messages
+        );
+        expect(false).toBe(true);
+      } catch (error) {
+        if (error instanceof UserInputError) {
+          const err = JSON.parse(error.message);
+          expect(err).toHaveLength(3);
+        } else throw error;
+      }
+    });
+  });
+});

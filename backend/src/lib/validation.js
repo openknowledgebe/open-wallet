@@ -14,7 +14,7 @@ configure({
   EXISTY_STRICT: true
 });
 
-const MAX_LENGTH = 500;
+const MAX_LENGTH = process.env.STRING_MAX_CHAR || 500;
 
 exports.validate = (data, rules, messages) => {
   return new Promise((resolve, reject) => {

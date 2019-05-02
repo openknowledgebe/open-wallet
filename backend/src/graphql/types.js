@@ -18,6 +18,7 @@ module.exports = gql`
     login(email: String!, password: String!): User! @guest
     expenseClaim(expense: Expense!): Transaction! @auth
     updateProfile(user: UserUpdateInput!): User! @auth
+    uploadInvoice(invoice: InvoiceUpload!): Transaction!
   }
   type Success {
     status: Boolean!
@@ -121,7 +122,8 @@ module.exports = gql`
   }
 
   input CompanyInput {
-    name: String!
+    id: ID
+    name: String
     email: String
     phone: String
     VAT: String

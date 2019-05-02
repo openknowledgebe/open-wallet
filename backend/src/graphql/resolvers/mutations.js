@@ -2,8 +2,24 @@ const {
   validate,
   registerValidation,
   updateProfileValidation,
-  expenseValidation
+  expenseValidation,
+  uploadInvoiceValidation
 } = require('../../lib/validation');
+
+const saveOrRetrieveCompany = async (company, Company) => {
+  if (!company) return null;
+  const { name, id } = company;
+  if (!name && !id) return null;
+  if (company.id) {
+    return Company.findById(id);
+  }
+  if (company) {
+    const cmpny = await Company.findOne({ name });
+    if (cmpny) return cmpny;
+    return new Company(company).save();
+  }
+  return null;
+};
 
 const store = (file, tags, folder, cloudinary) =>
   new Promise((resolve, reject) => {
@@ -87,12 +103,42 @@ module.exports = {
       }
     }
     return User.findOneAndUpdate({ _id: user.id }, args.user, { new: true });
+  },
+  uploadInvoice: async (
+    root,
+    { invoice },
+    { models: { Transaction, Company, Category }, cloudinary }
+  ) => {
+    const { formatData, rules, messages } = uploadInvoiceValidation;
+    await validate(formatData({ ...invoice }), rules, messages);
+    const company = await saveOrRetrieveCompany(invoice.company, Company);
+    invoice.company = company;
+    if (invoice.category && (invoice.category.name || invoice.category.id)) {
+      const category = Category.findOne({
+        $or: [{ _id: company.category.id }, { name: company.category.id }]
+      });
+      if (!category) {
+        throw new Error('Category not found.');
+      }
+      invoice.category = category;
+    }
+    invoice.flow = 'IN';
+    invoice.type = 'INVOICE';
+    invoice.date = invoice.date || Date.now();
+    invoice.invoice = await invoice.invoice;
+
+    const file = await store(invoice.invoice, 'invoice', '/invoices/pending', cloudinary);
+    invoice.file = file.secure_url;
+
+    return new Transaction(invoice).save();
+
+    // console.log(invoice);
   }
 };
 
 // TODO REMOVE EXAMPLE
 // {
-//   "query": "mutation ($amount: Float!, $description: String!, $receipt: Upload!) {expenseClaim(expense: {amount: $amount, description: $description, receipt: $receipt}) {id}}",
+//   "query": "mutation ($amount: Float!, $invoice: Upload!) {expenseClaim(expense: {amount: $amount, invoice: $invoice}) {id flow}}",
 //   "variables": {
 //     "amount": 10,
 //     "description": "Hello World!",

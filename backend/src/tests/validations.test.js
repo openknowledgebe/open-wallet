@@ -1,3 +1,4 @@
+const { UserInputError } = require('apollo-server-express');
 const { registerValidation, validate } = require('../lib/validation');
 
 describe('EXPENSE CLAIM VALIDATION', () => {});
@@ -55,12 +56,26 @@ describe('REGISTER VALIDATION', () => {
       await validate(data, rules, messages);
       expect(false).toBe(true);
     } catch (error) {
-      const err = JSON.parse(error.message);
-      expect(err[0].email).toBeTruthy();
-      expect(err[1].email).toBeTruthy();
-      expect(err[2].name).toBeTruthy();
-      expect(err[3].password).toBeTruthy();
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err[0].email).toBeTruthy();
+        expect(err[1].email).toBeTruthy();
+        expect(err[2].name).toBeTruthy();
+        expect(err[3].password).toBeTruthy();
+      } else throw error;
     }
+  });
+
+  describe('throws if password is not matching requirements', () => {
+    it('throws if password less than minimal characters', async () => {
+      try {
+        await validate({ ...user, password: '1234567' }, rules, messages);
+        expect(false).toBe(true);
+      } catch (error) {
+        if (error instanceof UserInputError) expect(true).toBe(true);
+        else throw error;
+      }
+    });
   });
 
   it('throws if one of bankDetails field is missing while the other is present', async () => {
@@ -73,15 +88,19 @@ describe('REGISTER VALIDATION', () => {
     try {
       await validate(data, rules, messages);
     } catch (error) {
-      const err = JSON.parse(error.message);
-      expect(err[0]['bankDetails.bic']).toBeTruthy();
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err[0]['bankDetails.bic']).toBeTruthy();
+      } else throw error;
     }
     try {
       await validate({ ...data, bankDetails: { bic: 'MY BIC' } }, rules, messages);
       expect(false).toBe(true);
     } catch (error) {
-      const err = JSON.parse(error.message);
-      expect(err[0]['bankDetails.iban']).toBeTruthy();
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err[0]['bankDetails.iban']).toBeTruthy();
+      } else throw error;
     }
   });
 
@@ -91,32 +110,40 @@ describe('REGISTER VALIDATION', () => {
       await validate({ ...user, address: { street: 'My street' } }, rules, messages);
       expect(false).toBe(true);
     } catch (error) {
-      const err = JSON.parse(error.message);
-      expect(err).toHaveLength(2);
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err).toHaveLength(2);
+      } else throw error;
     }
     // city is present
     try {
       await validate({ ...user, address: { city: 'My city' } }, rules, messages);
       expect(false).toBe(true);
     } catch (error) {
-      const err = JSON.parse(error.message);
-      expect(err).toHaveLength(2);
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err).toHaveLength(2);
+      } else throw error;
     }
     // zipCode is present
     try {
       await validate({ ...user, address: { zipCode: 1000 } }, rules, messages);
       expect(false).toBe(true);
     } catch (error) {
-      const err = JSON.parse(error.message);
-      expect(err).toHaveLength(3);
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err).toHaveLength(3);
+      } else throw error;
     }
     // country is present
     try {
       await validate({ ...user, address: { country: 'My country' } }, rules, messages);
       expect(false).toBe(true);
     } catch (error) {
-      const err = JSON.parse(error.message);
-      expect(err).toHaveLength(2);
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err).toHaveLength(2);
+      } else throw error;
     }
   });
 });

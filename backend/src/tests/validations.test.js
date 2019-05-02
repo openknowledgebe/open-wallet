@@ -1,5 +1,9 @@
 const { UserInputError } = require('apollo-server-express');
-const { registerValidation, validate } = require('../lib/validation');
+const {
+  validation: { registerValidation, validate }
+} = require('../');
+
+const FIFTYONECHARSSTR = 'QYE5TOXWrDbi0bSQDbM1KmKOljjR5SihgUJO7aDwkkjUJVJOzk6';
 
 describe('EXPENSE CLAIM VALIDATION', () => {});
 describe('REGISTER VALIDATION', () => {
@@ -143,6 +147,31 @@ describe('REGISTER VALIDATION', () => {
       if (error instanceof UserInputError) {
         const err = JSON.parse(error.message);
         expect(err).toHaveLength(2);
+      } else throw error;
+    }
+  });
+
+  it('throws when length over max', async () => {
+    const data = {
+      ...user,
+      name: FIFTYONECHARSSTR,
+      address: {
+        city: FIFTYONECHARSSTR,
+        country: FIFTYONECHARSSTR,
+        street: FIFTYONECHARSSTR
+      },
+      bankDetails: {
+        bic: FIFTYONECHARSSTR,
+        iban: FIFTYONECHARSSTR
+      }
+    };
+    try {
+      await validate(data, rules, messages);
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        const err = JSON.parse(error.message);
+        expect(err).toHaveLength(6);
       } else throw error;
     }
   });

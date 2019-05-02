@@ -41,54 +41,102 @@ const minMessage = (field, validation, args) => {
 const maxMessage = (field, validation, args) => TOO_LONG(field, args[0]);
 const aboveMessage = (field, validation, args) => MUST_BE_ABOVE(field, args[0]);
 
+const addressValidation = {
+  rules: {
+    'address.street': `required_with_any:address.city,address.country,address.zipCode|max:${MAX_LENGTH}`,
+    'address.city': `required_with_any:address.street,address.country,address.zipCode|max:${MAX_LENGTH}`,
+    'address.country': `required_with_any:address.street,address.city,address.zipCode|max:${MAX_LENGTH}`
+  },
+  messages: { required_with_any: requiredMessage, max: maxMessage }
+};
+
+const bankDetailsValidation = {
+  rules: {
+    'bankDetails.bic': `requiredIf:bankDetails.iban|max:${MAX_LENGTH}`,
+    'bankDetails.iban': `requiredIf:bankDetails.bic|max:${MAX_LENGTH}` // TODO change to IBAN format
+  },
+  messages: { requiredIf: requiredMessage, max: maxMessage }
+};
+
+const companyValidation = {
+  rules: {
+    'company.name': `required|max:${MAX_LENGTH}`,
+    'company.email': 'email',
+    'company.phone': `max:${MAX_LENGTH}`, // TODO change to regex
+    'company.VAT': `max:12`, // TODO change to regex ?
+    ...addressValidation.rules,
+    ...bankDetailsValidation.rules
+  },
+  messages: {
+    required: requiredMessage,
+    max: maxMessage,
+    email: WRONG_EMAIL_FORMAT,
+    ...bankDetailsValidation.messages,
+    ...addressValidation.messages
+  },
+  formatData: data => ({
+    ...data,
+    email: data.email === null ? undefined : data.email,
+    address: { ...data.address },
+    bankDetails: { ...data.bankDetails }
+  })
+};
+
+// module.exports = companyValidation;
+
+// const categoryValidation = {
+//   rules: {
+//     name: `required|max:${MAX_LENGTH}`
+//   },
+//   messages: {
+//     required: requiredMessage
+//   }
+// };
+
+// module.exports = categoryValidation;
+
 exports.registerValidation = {
   rules: {
     email: 'email|required',
     name: `required|max:${MAX_LENGTH}`,
     password: `required|min:8|max:1000`,
-    street: `required_with_any:city,country,zipCode|max:${MAX_LENGTH}`,
-    city: `required_with_any:street,country,zipCode|max:${MAX_LENGTH}`,
-    country: `required_with_any:street,city,zipCode|max:${MAX_LENGTH}`,
-    bic: `requiredIf:iban|max:${MAX_LENGTH}`,
-    iban: `requiredIf:bic|max:${MAX_LENGTH}` // TODO change to IBAN format
+    ...addressValidation.rules,
+    ...bankDetailsValidation.rules
   },
   messages: {
     required: requiredMessage,
-    requiredIf: requiredMessage,
-    required_with_any: requiredMessage,
+    ...addressValidation.messages,
+    ...bankDetailsValidation.messages,
     min: minMessage,
     max: maxMessage,
-    'email.email': WRONG_EMAIL_FORMAT
+    email: WRONG_EMAIL_FORMAT
   },
   formatData: data => {
     return {
       email: data.email,
       name: data.name,
       password: data.password,
-      ...data.address,
-      ...data.bankDetails
+      bankDetails: { ...data.bankDetails },
+      address: { ...data.address }
     };
   }
 };
 
 exports.updateProfileValidation = {
   rules: {
-    email: 'min:1|email',
+    email: 'email',
     name: `min:1|max:${MAX_LENGTH}`,
     password: `min:8|max:1000`,
-    street: `required_with_any:city,country,zipCode|max:${MAX_LENGTH}`,
-    city: `required_with_any:street,country,zipCode|max:${MAX_LENGTH}`,
-    country: `required_with_any:street,city,zipCode|max:${MAX_LENGTH}`,
-    bic: `requiredIf:iban|max:${MAX_LENGTH}`,
-    iban: `requiredIf:bic|max:${MAX_LENGTH}` // TODO change to IBAN format
+    ...addressValidation.rules,
+    ...bankDetailsValidation.rules
   },
   messages: {
     required: requiredMessage,
-    required_with_any: requiredMessage,
-    requiredIf: requiredMessage,
     min: minMessage,
     max: maxMessage,
-    'email.email': WRONG_EMAIL_FORMAT
+    email: WRONG_EMAIL_FORMAT,
+    ...addressValidation.messages,
+    ...bankDetailsValidation.messages
   },
   formatData: data => {
     const formattedData = {};
@@ -99,8 +147,7 @@ exports.updateProfileValidation = {
     else formattedData.name = '';
     if (data.password !== null) formattedData.password = data.password;
     else formattedData.password = '';
-
-    return { ...formattedData, ...data.bankDetails, ...data.address };
+    return { ...formattedData, bankDetails: { ...data.bankDetails }, address: { ...data.address } };
   }
 };
 
@@ -120,4 +167,23 @@ exports.expenseValidation = {
   formatData: data => {
     return { VAT: data.VAT, amount: data.amount, date: data.date, description: data.description };
   }
+};
+
+exports.uploadInvoiceValidation = {
+  rules: {
+    VAT: 'above:-1',
+    amount: 'above:-1',
+    date: 'date',
+    expDate: 'date',
+    ...companyValidation.rules,
+    'company.name': `min:1|max:${MAX_LENGTH}`
+  },
+  messages: {
+    above: aboveMessage,
+    date: INVALID_DATE_FORMAT,
+    min: minMessage,
+    max: maxMessage,
+    ...companyValidation.messages
+  },
+  formatData: data => ({ ...data, company: companyValidation.formatData({ ...data.company }) })
 };

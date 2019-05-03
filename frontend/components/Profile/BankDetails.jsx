@@ -8,20 +8,32 @@ import InputField from '../commons/InputField';
 import { bankDetailsType } from '../../types';
 import formatErrors from '../../lib/formatErrors';
 import { required } from '../../lib/validation';
+import ErrorMessage from '../commons/ErrorMessage';
+import SuccessMessage from '../commons/SuccessMessage';
 
-const renderUI = (iban, bic, handleSubmit, save, loading) => {
+const renderUI = (iban, bic, errors, success, error, handleSubmit, save, loading) => {
   return (
-    <Card fluid>
+    <Card fluid style={{ height: '100%' }} raised>
       <Card.Content>
         <h2>My bank details</h2>
       </Card.Content>
-      <Card.Content>
-        <Form size="massive" loading={loading} method="post" onSubmit={e => handleSubmit(e, save)}>
+      <Card.Content style={{ height: '100%' }}>
+        <Form
+          size="massive"
+          error={!!error}
+          success={success}
+          loading={loading}
+          method="post"
+          onSubmit={e => handleSubmit(e, save)}
+        >
+          <ErrorMessage error={error} />
+          <SuccessMessage message="Your bank details have been saved!" />
           <InputField
             id="up-profile-bankdetails-iban"
             label="IBAN"
             value={iban.value}
             onChange={iban.onChange}
+            errorMessage={errors.iban}
             name="iban"
           />
           <InputField
@@ -29,6 +41,7 @@ const renderUI = (iban, bic, handleSubmit, save, loading) => {
             label="BIC"
             value={bic.value}
             onChange={bic.onChange}
+            errorMessage={errors.bic}
             name="bic"
           />
           <Button primary size="massive" type="submit">
@@ -43,7 +56,7 @@ const renderUI = (iban, bic, handleSubmit, save, loading) => {
 const BankDetails = ({ bankDetails }) => {
   const iban = useFormInput(bankDetails ? bankDetails.iban : '');
   const bic = useFormInput(bankDetails ? bankDetails.bic : '');
-  const [errors, setErrors] = useState();
+  const [errors, setErrors] = useState({});
 
   const variables = {
     user: {
@@ -56,6 +69,7 @@ const BankDetails = ({ bankDetails }) => {
 
   const handleSubmit = (e, save) => {
     e.preventDefault();
+    setErrors({});
     const ibanValidation = required('IBAN');
     validateAll(iban.value, ibanValidation.rule, ibanValidation.message)
       .then(() => save())
@@ -65,8 +79,9 @@ const BankDetails = ({ bankDetails }) => {
   };
   return (
     <Mutation mutation={UPDATE_ME} variables={variables}>
-      {/* TODO handle error */}
-      {(save, { loading }) => renderUI(iban, bic, handleSubmit, save, loading)}
+      {(save, { data, error, loading }) => {
+        return renderUI(iban, bic, errors, !!data, error, handleSubmit, save, loading);
+      }}
     </Mutation>
   );
 };

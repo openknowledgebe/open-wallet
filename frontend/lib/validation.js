@@ -23,3 +23,17 @@ export const EMAIL = {
   },
   rule: 'required|email'
 };
+
+export const NON_NEGATIVE = {
+  message: 'The value cannot be negative',
+  rule: 'above:-1'
+};
+
+export const DATE = {
+  message: 'Please provide a valid date',
+  rule: 'date'
+};
+
+export const validateFile = file => {
+  // TODO
+};

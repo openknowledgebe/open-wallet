@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { validateAll } from 'indicative';
 import { Mutation } from 'react-apollo';
 import { Form } from 'semantic-ui-react';
+import Router from 'next/router';
 import InputField from './commons/InputField';
 import useFormInput from './hooks/useFormInput';
 import { LOG_ME_IN } from '../graphql/queries';
 import formatErrors from '../lib/formatErrors';
 import { EMAIL, required } from '../lib/validation';
+import ErrorMessage from './commons/ErrorMessage';
 
 const Login = () => {
   const [errors, setErrors] = useState({ email: '', password: '' });
@@ -39,17 +41,18 @@ const Login = () => {
 
   return (
     <Mutation mutation={LOG_ME_IN} variables={{ email: email.value, password: password.value }}>
-      {/* TODO handle error */}
-      {/* TODO redirect to user home page */}
-      {(login, { loading }) => {
+      {(login, { loading, error, data }) => {
+        if (data) Router.push('/profile');
         return (
           <div>
             <Form
               loading={loading}
+              error={!!error}
               size="massive"
               method="post"
               onSubmit={e => handleSubmit(e, login)}
             >
+              <ErrorMessage error={error} />
               <InputField
                 label="Email"
                 name="email"
@@ -57,6 +60,7 @@ const Login = () => {
                 id="login-email"
                 placeholder="Your email address"
                 autoFocus
+                errorMessage={errors.email}
                 {...email}
               />
               <InputField
@@ -65,6 +69,7 @@ const Login = () => {
                 type="password"
                 id="login-password"
                 placeholder="Your password"
+                errorMessage={errors.password}
                 {...password}
               />
               <Form.Button primary size="massive" type="submit">

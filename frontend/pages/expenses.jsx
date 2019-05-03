@@ -1,18 +1,18 @@
 import React from 'react';
-import Profile from '../components/Profile';
+import ExpenseForm from '../components/ExpenseForm';
 import Page from '../components/Page';
 import redirect from '../lib/redirect';
 import checkLoggedIn from '../lib/checkLoggedIn';
 
-const ProfilePage = () => {
+const ExpensesPage = () => {
   return (
     <Page>
-      <Profile />
+      <ExpenseForm />
     </Page>
   );
 };
 
-ProfilePage.getInitialProps = async context => {
+ExpensesPage.getInitialProps = async context => {
   const { loggedInUser } = await checkLoggedIn(context.apolloClient);
   if (!loggedInUser.me) {
     redirect(context, '/login');
@@ -21,4 +21,4 @@ ProfilePage.getInitialProps = async context => {
   return {};
 };
 
-export default ProfilePage;
+export default ExpensesPage;

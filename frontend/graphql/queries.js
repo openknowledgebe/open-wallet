@@ -47,15 +47,21 @@ export const REGISTER_ME = gql`
 `;
 
 export const EXPENSE_CLAIM = gql`
-  mutation($amount: Float!, $description: String!, $VAT: Int, $receipt: Upload!) {
-    expenseClaim(
-      expense: { amount: $amount, description: $description, VAT: $VAT, receipt: $receipt }
-    ) {
+  mutation($expense: Expense!) {
+    expenseClaim(expense: $expense) {
       id
       user {
         id
         name
       }
+    }
+  }
+`;
+
+export const INVOICE_UPLOAD = gql`
+  mutation($invoice: InvoiceUpload!) {
+    uploadInvoice(invoice: $invoice) {
+      id
     }
   }
 `;

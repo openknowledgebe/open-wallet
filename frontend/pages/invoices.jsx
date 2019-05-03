@@ -2,9 +2,14 @@ import React from 'react';
 import Page from '../components/Page';
 import redirect from '../lib/redirect';
 import checkLoggedIn from '../lib/checkLoggedIn';
+import InvoiceUploadForm from '../components/InvoiceUploadForm';
 
 const InvoicesPage = () => {
-  return <Page>This is the invoices page</Page>;
+  return (
+    <Page>
+      <InvoiceUploadForm />
+    </Page>
+  );
 };
 
 InvoicesPage.getInitialProps = async context => {

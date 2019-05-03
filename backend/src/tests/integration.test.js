@@ -3,7 +3,7 @@ const FormData = require('form-data');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const { auth } = require('./mocks/index');
-const { db, models, cloudinary } = require('../');
+const { db, models, cloudinary, validation } = require('../');
 const { constructTestServer, startTestServer, populate, clean } = require('./utils');
 
 const {
@@ -11,10 +11,13 @@ const {
   GET_ME,
   REGISTER,
   ALL_USERS,
-  EXPENSE_CLAIM_WITHOUT_GQL
+  EXPENSE_CLAIM_WITHOUT_GQL,
+  UPDATE_PROFILE
 } = require('./graphql/queryStrings');
 
 const testUser = { user: { name: 'Test Test', email: 'test@email.com', password: 'testing0189' } };
+const bankDetails = { iban: 'MY IBAN', bic: 'MY BIC' };
+const address = { street: 'My street', city: 'My city', zipCode: 1000, country: 'My country' };
 
 describe('Authenticated user', () => {
   let loggedUser;
@@ -90,6 +93,96 @@ describe('Authenticated user', () => {
     expect(res.data.users.length).toBeGreaterThanOrEqual(3);
   });
 
+  describe('update profile', () => {
+    let server;
+    let user;
+    beforeAll(async () => {
+      // authenticate another user to avoid crash in other tests
+      user = await models.User.findByEmail('mitchell@gmail.com');
+      server = constructTestServer({
+        context: () => {
+          return { models, user, auth, db, validation };
+        }
+      });
+    });
+
+    it('updates address without overwriting others fields', async () => {
+      const { mutate } = createTestClient(server);
+      const res = await mutate({
+        mutation: UPDATE_PROFILE,
+        variables: { user: { address } }
+      });
+      expect(res.data.updateProfile.address).toEqual(address);
+      expect(res.data.updateProfile.email).toBeTruthy();
+    });
+
+    it('updates bank details without overwriting others fields', async () => {
+      const { mutate } = createTestClient(server);
+      const res = await mutate({
+        mutation: UPDATE_PROFILE,
+        variables: { user: { bankDetails } }
+      });
+      expect(res.data.updateProfile.bankDetails).toEqual(bankDetails);
+      expect(res.data.updateProfile.address).toEqual(address);
+    });
+
+    it('updates email without overwritting others fields', async () => {
+      const { mutate } = createTestClient(server);
+      const res = await mutate({
+        mutation: UPDATE_PROFILE,
+        variables: { user: { email: 'johnny@john.com' } }
+      });
+      expect(res.data.updateProfile.email).toEqual('johnny@john.com');
+      expect(res.data.updateProfile.address).toEqual(address);
+    });
+
+    it('fails if email already exists', async () => {
+      const { mutate } = createTestClient(server);
+      const res = await mutate({
+        mutation: UPDATE_PROFILE,
+        variables: { user: { email: 'johnny@john.com' } }
+      });
+      expect(res.errors).toBeTruthy();
+    });
+
+    it('updates name without overwritting others fields', async () => {
+      const { mutate } = createTestClient(server);
+      const res = await mutate({
+        mutation: UPDATE_PROFILE,
+        variables: { user: { name: 'Johnny John' } }
+      });
+      expect(res.data.updateProfile.name).toEqual('Johnny John');
+      expect(res.data.updateProfile.address).toEqual(address);
+    });
+
+    it('can update all the fields at once', async () => {
+      const addr = {
+        street: 'Next street',
+        city: 'Next city',
+        zipCode: 1001,
+        country: 'Next Country'
+      };
+      const bd = { iban: 'BE098483992', bic: 'BPTOZE223' };
+      const { mutate } = createTestClient(server);
+      const res = await mutate({
+        mutation: UPDATE_PROFILE,
+        variables: {
+          user: {
+            email: user.email,
+            name: user.name,
+            password: 'testing343',
+            address: addr,
+            bankDetails: bd
+          }
+        }
+      });
+      expect(res.data.updateProfile.name).toEqual(user.name);
+      expect(res.data.updateProfile.email).toEqual(user.email);
+      expect(res.data.updateProfile.address).toEqual(addr);
+      expect(res.data.updateProfile.bankDetails).toEqual(bd);
+    });
+  });
+
   describe('claims expenses', () => {
     let uri;
     let server;
@@ -97,7 +190,7 @@ describe('Authenticated user', () => {
     beforeAll(() => {
       server = constructTestServer({
         context: () => {
-          return { models, user: loggedUser, auth, cloudinary, db };
+          return { models, user: loggedUser, auth, cloudinary, db, validation };
         }
       });
     });

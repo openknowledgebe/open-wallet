@@ -2,7 +2,13 @@
 const { server, db } = require('../');
 
 const { startTestServer, toPromise, populate, clean } = require('./utils');
-const { GET_ME, LOGIN_ME_IN, REGISTER, ALL_USERS } = require('./graphql/queryStrings');
+const {
+  GET_ME,
+  LOGIN_ME_IN,
+  REGISTER,
+  ALL_USERS,
+  UPDATE_PROFILE
+} = require('./graphql/queryStrings');
 
 const testUser = { user: { name: 'Test Test', email: 'tesT@email.com', password: 'testing0189' } };
 const bankDetails = { iban: 'MY IBAN', bic: 'MY BIC' };
@@ -140,6 +146,18 @@ describe('Server - e2e', () => {
       expect(res).toMatchSnapshot();
       expect(res.data.register.bankDetails).toBeTruthy();
       expect(res.data.register.address).toBeTruthy();
+    });
+  });
+
+  describe('Update profile', () => {
+    it('requires authenticated user', async () => {
+      const res = await toPromise(
+        graphql({
+          query: UPDATE_PROFILE,
+          variables: { user: {} }
+        })
+      );
+      expect(res).toMatchSnapshot();
     });
   });
 });

@@ -38,6 +38,25 @@ module.exports.REGISTER = gql`
   }
 `;
 
+module.exports.UPDATE_PROFILE = gql`
+  mutation updateProfile($user: UserUpdateInput!) {
+    updateProfile(user: $user) {
+      name
+      email
+      bankDetails {
+        iban
+        bic
+      }
+      address {
+        street
+        city
+        zipCode
+        country
+      }
+    }
+  }
+`;
+
 module.exports.ALL_USERS = gql`
   query users {
     users {

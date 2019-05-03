@@ -184,3 +184,26 @@ Object {
   },
 }
 `;
+
+exports[`Server - e2e Update profile requires authenticated user 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You must be logged in.",
+      "path": Array [
+        "updateProfile",
+      ],
+    },
+  ],
+}
+`;

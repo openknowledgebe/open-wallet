@@ -95,3 +95,13 @@ module.exports.EXPENSE_CLAIM_WITHOUT_GQL = `
     }
   }
 `;
+
+module.exports.INVOICE_UPLOAD_WITHOUT_GQL = `
+  mutation($amount: Float!, $invoice: Upload!) {
+    uploadInvoice(invoice: { amount: $amount, invoice: $invoice }) {
+      id
+      type
+      flow
+    }
+  }
+`;

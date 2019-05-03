@@ -23,6 +23,29 @@ Object {
 }
 `;
 
+exports[`Server - e2e Expense claim requires authenticated user 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 3,
+        },
+      ],
+      "message": "You must be logged in.",
+      "path": Array [
+        "expenseClaim",
+      ],
+    },
+  ],
+}
+`;
+
 exports[`Server - e2e Login fails on incorrect email 1`] = `
 Object {
   "data": null,
@@ -202,6 +225,29 @@ Object {
       "message": "You must be logged in.",
       "path": Array [
         "updateProfile",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Server - e2e Uplaod invoice requires authenticated user 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 3,
+        },
+      ],
+      "message": "You must be logged in.",
+      "path": Array [
+        "uploadInvoice",
       ],
     },
   ],

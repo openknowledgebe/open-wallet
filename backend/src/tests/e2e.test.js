@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+const FormData = require('form-data');
+const fetch = require('node-fetch');
 // import our production apollo-server instance
 const { server, db } = require('../');
 
@@ -7,7 +10,9 @@ const {
   LOGIN_ME_IN,
   REGISTER,
   ALL_USERS,
-  UPDATE_PROFILE
+  UPDATE_PROFILE,
+  EXPENSE_CLAIM_WITHOUT_GQL,
+  INVOICE_UPLOAD_WITHOUT_GQL
 } = require('./graphql/queryStrings');
 
 const testUser = { user: { name: 'Test Test', email: 'tesT@email.com', password: 'testing0189' } };
@@ -17,7 +22,7 @@ const address = { street: 'My street', city: 'My city', zipCode: 1000, country: 
 describe('Server - e2e', () => {
   let stop;
   let graphql;
-
+  let uri;
   beforeAll(async () => {
     await db.connect();
     await populate();
@@ -34,6 +39,8 @@ describe('Server - e2e', () => {
     stop = testServer.stop;
     // eslint-disable-next-line prefer-destructuring
     graphql = testServer.graphql;
+    // eslint-disable-next-line prefer-destructuring
+    uri = testServer.uri;
   });
 
   afterEach(async () => {
@@ -157,6 +164,52 @@ describe('Server - e2e', () => {
           variables: { user: {} }
         })
       );
+      expect(res).toMatchSnapshot();
+    });
+  });
+
+  describe('Expense claim', () => {
+    it('requires authenticated user', async () => {
+      // https://github.com/jaydenseric/graphql-upload/issues/125
+
+      const body = new FormData();
+
+      body.append(
+        'operations',
+        JSON.stringify({
+          query: EXPENSE_CLAIM_WITHOUT_GQL,
+          variables: {
+            amount: 10,
+            description: 'Hello World!',
+            receipt: null
+          }
+        })
+      );
+      body.append('map', JSON.stringify({ '0': ['variables.receipt'] }));
+      body.append('0', 'a', { filename: 'a.pdf' });
+      let res = await fetch(uri, { method: 'POST', body });
+      res = await res.json();
+      expect(res).toMatchSnapshot();
+    });
+  });
+
+  describe('Uplaod invoice', () => {
+    it('requires authenticated user', async () => {
+      const body = new FormData();
+      body.append(
+        'operations',
+        JSON.stringify({
+          query: INVOICE_UPLOAD_WITHOUT_GQL,
+          variables: {
+            amount: 10,
+            invoice: null
+          }
+        })
+      );
+      body.append('map', JSON.stringify({ '0': ['variables.invoice'] }));
+      body.append('0', 'a', { filename: 'a.pdf' });
+      let res = await fetch(uri, { method: 'POST', body });
+      res = await res.json();
       expect(res).toMatchSnapshot();
     });
   });

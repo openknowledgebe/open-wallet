@@ -12,7 +12,8 @@ const {
   REGISTER,
   ALL_USERS,
   EXPENSE_CLAIM_WITHOUT_GQL,
-  UPDATE_PROFILE
+  UPDATE_PROFILE,
+  INVOICE_UPLOAD_WITHOUT_GQL
 } = require('./graphql/queryStrings');
 
 const testUser = { user: { name: 'Test Test', email: 'test@email.com', password: 'testing0189' } };
@@ -236,6 +237,53 @@ describe('Authenticated user', () => {
       expect(res.data.expenseClaim.user.expenses.includes(res.data.expenseClaim.id)).toBeTruthy();
       delete res.data.expenseClaim.id;
       delete res.data.expenseClaim.user.expenses;
+      expect(res).toMatchSnapshot();
+    });
+  });
+
+  describe('Upload invoice', () => {
+    let uri;
+    let server;
+    let stop;
+    beforeAll(() => {
+      server = constructTestServer({
+        context: () => {
+          return { models, user: loggedUser, auth, cloudinary, db, validation };
+        }
+      });
+    });
+
+    beforeEach(async () => {
+      const testServer = await startTestServer(server);
+      // eslint-disable-next-line prefer-destructuring
+      stop = testServer.stop;
+      // eslint-disable-next-line prefer-destructuring
+      uri = testServer.uri;
+    });
+
+    afterEach(async () => {
+      stop();
+    });
+
+    it('succeeds', async () => {
+      const body = new FormData();
+      body.append(
+        'operations',
+        JSON.stringify({
+          query: INVOICE_UPLOAD_WITHOUT_GQL,
+          variables: {
+            amount: 10,
+            invoice: null
+          }
+        })
+      );
+      body.append('map', JSON.stringify({ '0': ['variables.invoice'] }));
+      const file = fs.createReadStream(`${__dirname}/a.pdf`);
+      body.append('0', file);
+
+      let res = await fetch(uri, { method: 'POST', body });
+      res = await res.json();
+      delete res.data.uploadInvoice.id;
       expect(res).toMatchSnapshot();
     });
   });

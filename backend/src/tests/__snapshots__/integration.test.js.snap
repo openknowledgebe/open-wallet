@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Authenticated user Upload invoice succeeds 1`] = `
+Object {
+  "data": Object {
+    "uploadInvoice": Object {
+      "flow": "IN",
+      "type": "INVOICE",
+    },
+  },
+}
+`;
+
 exports[`Authenticated user claims expenses succeeds 1`] = `
 Object {
   "data": Object {

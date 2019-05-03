@@ -2,3 +2,5 @@ node_modules/
 .next/
 build/
 .vscode/
+.env
+coverage/

@@ -24,6 +24,16 @@ module.exports.REGISTER = gql`
     register(user: $user) {
       name
       email
+      bankDetails {
+        iban
+        bic
+      }
+      address {
+        street
+        city
+        zipCode
+        country
+      }
     }
   }
 `;

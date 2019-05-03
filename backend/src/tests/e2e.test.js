@@ -5,6 +5,8 @@ const { startTestServer, toPromise, populate, clean } = require('./utils');
 const { GET_ME, LOGIN_ME_IN, REGISTER, ALL_USERS } = require('./graphql/queryStrings');
 
 const testUser = { user: { name: 'Test Test', email: 'tesT@email.com', password: 'testing0189' } };
+const bankDetails = { iban: 'MY IBAN', bic: 'MY BIC' };
+const address = { street: 'My street', city: 'My city', zipCode: 1000, country: 'My country' };
 
 describe('Server - e2e', () => {
   let stop;
@@ -119,6 +121,25 @@ describe('Server - e2e', () => {
       );
       expect(res).toMatchSnapshot();
       expect(res.data.register.email).toBe('test@email.com');
+    });
+
+    it('succeeds & saves address and bankDetails', async () => {
+      const res = await toPromise(
+        graphql({
+          query: REGISTER,
+          variables: {
+            user: {
+              ...testUser.user,
+              bankDetails,
+              address,
+              email: 'test1@gmail.com'
+            }
+          }
+        })
+      );
+      expect(res).toMatchSnapshot();
+      expect(res.data.register.bankDetails).toBeTruthy();
+      expect(res.data.register.address).toBeTruthy();
     });
   });
 });

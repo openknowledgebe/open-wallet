@@ -155,7 +155,30 @@ exports[`Server - e2e Register succeeds & returns lower case email 1`] = `
 Object {
   "data": Object {
     "register": Object {
+      "address": null,
+      "bankDetails": null,
       "email": "test@email.com",
+      "name": "Test Test",
+    },
+  },
+}
+`;
+
+exports[`Server - e2e Register succeeds & saves address and bankDetails 1`] = `
+Object {
+  "data": Object {
+    "register": Object {
+      "address": Object {
+        "city": "My city",
+        "country": "My country",
+        "street": "My street",
+        "zipCode": 1000,
+      },
+      "bankDetails": Object {
+        "bic": "MY BIC",
+        "iban": "MY IBAN",
+      },
+      "email": "test1@gmail.com",
       "name": "Test Test",
     },
   },

@@ -73,7 +73,7 @@ exports[`Server - e2e Login succeeds 1`] = `
 Object {
   "data": Object {
     "login": Object {
-      "id": "5ca36073a89e1e5c7ad111af",
+      "email": "sylvie@hotmail.com",
       "name": "Sylvie Delcourt",
     },
   },
@@ -102,5 +102,62 @@ Object {
       ],
     },
   ],
+}
+`;
+
+exports[`Server - e2e Register fails if email already exists 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Email already exists!",
+      "path": Array [
+        "register",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Server - e2e Register ignores email case for validation 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Email already exists!",
+      "path": Array [
+        "register",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Server - e2e Register succeeds & returns lower case email 1`] = `
+Object {
+  "data": Object {
+    "register": Object {
+      "email": "test@email.com",
+      "name": "Test Test",
+    },
+  },
 }
 `;

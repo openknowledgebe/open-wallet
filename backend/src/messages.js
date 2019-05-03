@@ -8,5 +8,7 @@ module.exports = {
   TOO_LONG: (fieldName, maxLength) =>
     `[${fieldName}] must have a maximum of ${maxLength} characters.`,
   REQUIRED: fieldName => `[${fieldName}] is required (cannot be empty)`,
-  WRONG_EMAIL_FORMAT: 'Please provide a valid email address.'
+  WRONG_EMAIL_FORMAT: 'Please provide a valid email address.',
+  INVALID_DATE_FORMAT: 'Please provide a valid date format',
+  MUST_BE_ABOVE: (fieldName, min) => `The value of [${fieldName}] should be above ${min}`
 };

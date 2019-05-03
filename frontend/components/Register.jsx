@@ -7,6 +7,8 @@ import useFormInput from './hooks/useFormInput';
 import { REGISTER_ME } from '../graphql/queries';
 import formatErrors from '../lib/formatErrors';
 import { EMAIL, required, PASSWORD } from '../lib/validation';
+import ErrorMessage from './commons/ErrorMessage';
+import SuccessMessage from './commons/SuccessMessage';
 
 const Register = () => {
   const email = useFormInput('');
@@ -14,7 +16,7 @@ const Register = () => {
   const password = useFormInput('');
   const passwordRepeat = useFormInput('');
 
-  const [errors, setErrors] = useState();
+  const [errors, setErrors] = useState({});
 
   const variables = {
     user: {
@@ -52,22 +54,25 @@ const Register = () => {
 
   return (
     <Mutation mutation={REGISTER_ME} variables={variables}>
-      {/* TODO handle error */}
-      {/* Alert email sent */}
-      {(register, { loading }) => (
+      {(register, { loading, data, error }) => (
         <div>
           <Form
+            success={!!data}
+            error={!!error}
             size="massive"
             loading={loading}
             method="post"
             onSubmit={e => handleSubmit(e, register)}
           >
+            <ErrorMessage error={error} />
+            <SuccessMessage message="Account succesfully created. You can login." />
             <InputField
               autoFocus
               name="name"
-              label="First name"
+              label="Name"
               id="reg-name"
               placeholder="Full name (e.g John Doe)"
+              errorMessage={errors.name}
               {...name}
             />
             <InputField
@@ -76,6 +81,7 @@ const Register = () => {
               type="email"
               id="reg-email"
               placeholder="Your email address"
+              errorMessage={errors.email}
               {...email}
             />
             <InputField
@@ -84,6 +90,7 @@ const Register = () => {
               type="password"
               id="reg-password"
               placeholder="Your password"
+              errorMessage={errors.password}
               {...password}
             />
             <InputField
@@ -92,6 +99,7 @@ const Register = () => {
               type="password"
               id="reg-password-repeat"
               placeholder="Confirm your password"
+              errorMessage={errors.password}
               {...passwordRepeat}
             />
             <Form.Button primary size="massive" type="submit">

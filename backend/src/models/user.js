@@ -21,7 +21,13 @@ const userSchema = new Schema({
     lowercase: true
   },
   address: Address,
-  bankDetails: BankDetails
+  bankDetails: BankDetails,
+  expenses: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Transaction'
+    }
+  ]
 });
 
 userSchema.pre('save', async function() {

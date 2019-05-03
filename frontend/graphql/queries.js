@@ -45,3 +45,29 @@ export const REGISTER_ME = gql`
     }
   }
 `;
+
+export const EXPENSE_CLAIM = gql`
+  mutation($amount: Float!, $description: String!, $VAT: Int, $date: String, $receipt: Upload!) {
+    expenseClaim(
+      expense: {
+        amount: $amount
+        description: $description
+        VAT: $VAT
+        date: $date
+        receipt: $receipt
+      }
+    ) {
+      id
+      user {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const LOG_ME_OUT = gql`
+  mutation {
+    logout
+  }
+`;

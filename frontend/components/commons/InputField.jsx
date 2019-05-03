@@ -1,6 +1,7 @@
+/* eslint-disable jsx-a11y/label-has-for */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form } from 'semantic-ui-react';
+import { Form, Input, Label } from 'semantic-ui-react';
 
 const InputField = ({
   label,
@@ -13,24 +14,34 @@ const InputField = ({
   value,
   onChange,
   action,
-  error,
-  autoFocus
+  errorMessage,
+  autoFocus,
+  children
 }) => {
   return (
-    <Form.Input
-      id={id}
-      required={isRequired}
-      label={label}
-      placeholder={placeholder}
-      name={name}
-      type={type}
-      disabled={disabled}
-      value={value}
-      onChange={onChange}
-      error={error}
-      autoFocus={autoFocus}
-      action={action}
-    />
+    <Form.Field error={!!errorMessage}>
+      <label htmlFor={id}>{label}</label>
+      <Input
+        labelPosition={children && 'right'}
+        id={id}
+        required={isRequired}
+        placeholder={placeholder}
+        name={name}
+        type={type}
+        disabled={disabled}
+        value={value}
+        onChange={onChange}
+        autoFocus={autoFocus}
+        action={action}
+      >
+        {children}
+      </Input>
+      {errorMessage && (
+        <Label size="big" basic color="red" pointing>
+          {errorMessage}
+        </Label>
+      )}
+    </Form.Field>
   );
 };
 
@@ -41,8 +52,9 @@ InputField.defaultProps = {
   placeholder: '',
   value: '',
   action: undefined,
-  error: false,
-  autoFocus: false
+  errorMessage: undefined,
+  autoFocus: false,
+  children: undefined
 };
 
 InputField.propTypes = {
@@ -56,8 +68,9 @@ InputField.propTypes = {
   placeholder: PropTypes.string,
   label: PropTypes.string.isRequired,
   action: PropTypes.node,
-  error: PropTypes.bool,
-  autoFocus: PropTypes.bool
+  errorMessage: PropTypes.string,
+  autoFocus: PropTypes.bool,
+  children: PropTypes.node
 };
 
 export default InputField;

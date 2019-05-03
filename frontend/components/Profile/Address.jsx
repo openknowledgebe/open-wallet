@@ -9,9 +9,11 @@ import { UPDATE_ME } from '../../graphql/queries';
 import { addressType } from '../../types';
 import formatErrors from '../../lib/formatErrors';
 import { required } from '../../lib/validation';
+import ErrorMessage from '../commons/ErrorMessage';
+import SuccessMessage from '../commons/SuccessMessage';
 
 const Address = ({ address }) => {
-  const [errors, setErrors] = useState();
+  const [errors, setErrors] = useState({});
 
   let addr = address;
   if (!addr) {
@@ -31,7 +33,7 @@ const Address = ({ address }) => {
       address: {
         street: newAddress.fields.street,
         city: newAddress.fields.city,
-        zipCode: parseInt(newAddress.fields.zipCode, 10),
+        zipCode: newAddress.fields.zipCode ? parseInt(newAddress.fields.zipCode, 10) : undefined,
         country: newAddress.fields.country
       }
     }
@@ -63,7 +65,6 @@ const Address = ({ address }) => {
         save();
       })
       .catch(errs => {
-        console.log(errs);
         setErrors(formatErrors(errs));
       });
   };
@@ -71,8 +72,16 @@ const Address = ({ address }) => {
   return (
     <Mutation mutation={UPDATE_ME} variables={variables}>
       {/* TODO handle error */}
-      {(save, { loading }) => (
-        <UI address={newAddress} handleSubmit={handleSubmit} loading={loading} save={save} />
+      {(save, { data, error, loading }) => (
+        <UI
+          success={!!data}
+          error={error}
+          address={newAddress}
+          errors={errors}
+          handleSubmit={handleSubmit}
+          loading={loading}
+          save={save}
+        />
       )}
     </Mutation>
   );
@@ -86,19 +95,29 @@ Address.propTypes = {
   address: addressType
 };
 
-const UI = ({ address, handleSubmit, loading, save }) => {
+const UI = ({ address, errors, success, error, handleSubmit, loading, save }) => {
   return (
-    <Card fluid>
+    <Card fluid raised style={{ height: '100%' }}>
       <Card.Content>
         <h2>My address</h2>
       </Card.Content>
-      <Card.Content>
-        <Form size="massive" loading={loading} method="post" onSubmit={e => handleSubmit(e, save)}>
+      <Card.Content style={{ height: '100%' }}>
+        <Form
+          size="massive"
+          success={success}
+          error={!!error}
+          loading={loading}
+          method="post"
+          onSubmit={e => handleSubmit(e, save)}
+        >
+          <ErrorMessage error={error} />
+          <SuccessMessage message="Your address has been saved!" />
           <InputField
             id="up-profile-address-street"
             label="Street"
             value={address.fields.street}
             onChange={address.onChange}
+            errorMessage={errors.street}
             name="street"
           />
           <InputField
@@ -106,6 +125,7 @@ const UI = ({ address, handleSubmit, loading, save }) => {
             label="City"
             value={address.fields.city}
             onChange={address.onChange}
+            errorMessage={errors.city}
             name="city"
           />
           <InputField
@@ -113,6 +133,7 @@ const UI = ({ address, handleSubmit, loading, save }) => {
             label="Zip Code"
             value={address.fields.zipCode}
             onChange={address.onChange}
+            errorMessage={errors.zipCode}
             name="zipCode"
             type="number"
           />
@@ -121,6 +142,7 @@ const UI = ({ address, handleSubmit, loading, save }) => {
             label="Country"
             value={address.fields.country}
             onChange={address.onChange}
+            errorMessage={errors.country}
             name="country"
           />
           <Button size="massive" primary type="submit">
@@ -132,11 +154,20 @@ const UI = ({ address, handleSubmit, loading, save }) => {
   );
 };
 
+UI.defaultProps = {
+  error: undefined
+};
+
 UI.propTypes = {
   address: addressType.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
-  loading: PropTypes.bool.isRequired
+  loading: PropTypes.bool.isRequired,
+  success: PropTypes.bool.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  errors: PropTypes.object.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  error: PropTypes.object
 };
 
 export default Address;

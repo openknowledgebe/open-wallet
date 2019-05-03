@@ -1,24 +1,22 @@
 const { gql } = require('apollo-server-express');
 
 module.exports = gql`
-  directive @constraint(
-    format: String
-    maxLength: Int
-    minLength: Int
-    required: Boolean
-  ) on INPUT_FIELD_DEFINITION
   directive @guest on FIELD_DEFINITION
   directive @auth on FIELD_DEFINITION
-  # types
 
+  # types
   type Query {
     users: [User]! @auth
     me: User @auth
+    myExpenses: [Transaction]! @auth
+    transactions: [Transaction]! @auth
   }
+
   type Mutation {
     register(user: UserInput!): User! @guest
     logout: Boolean!
     login(email: String!, password: String!): User! @guest
+    expenseClaim(expense: Expense!): Transaction! @auth
     updateProfile(user: UserUpdateInput!): User! @auth
   }
   type Success {
@@ -42,13 +40,28 @@ module.exports = gql`
     email: String!
     bankDetails: BankDetails
     address: Address
+    expenses: [String]
+  }
+
+  type Transaction {
+    id: ID!
+    flow: Flow!
+    state: State!
+    user: User!
+    amount: Float!
+    date: String!
+    expDate: String
+    description: String
+    file: String
+    VAT: Int
+    type: TransactionType!
   }
 
   #inputs
   input AdressInput {
-    street: String! @constraint(required: true)
-    city: String! @constraint(required: true)
-    country: String! @constraint(required: true)
+    street: String!
+    city: String!
+    country: String!
     zipCode: Int!
   }
 
@@ -58,9 +71,9 @@ module.exports = gql`
   }
 
   input UserInput {
-    name: String! @constraint(required: true)
-    password: String! @constraint(minLength: 8)
-    email: String! @constraint(format: "email")
+    name: String!
+    password: String!
+    email: String!
     bankDetails: BankDetailsInput
     address: AdressInput
   }
@@ -71,5 +84,32 @@ module.exports = gql`
     email: String
     bankDetails: BankDetailsInput
     address: AdressInput
+  }
+
+  input Expense {
+    amount: Float!
+    date: String
+    expDate: String
+    description: String!
+    receipt: Upload!
+    VAT: Int
+  }
+
+  #enums
+  enum Flow {
+    IN
+    OUT
+  }
+
+  enum State {
+    UNCLEARED
+    CLEARED
+    PAID
+    REJECTED
+  }
+
+  enum TransactionType {
+    INVOICE
+    EXPENSE
   }
 `;

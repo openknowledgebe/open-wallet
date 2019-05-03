@@ -91,10 +91,12 @@ const ExpenseForm = () => {
   const receipt = useInputFile({});
   const [errors, setErrors] = useState({});
   const variables = {
-    receipt: receipt.file.file,
-    amount: expense.fields.amount ? parseFloat(expense.fields.amount) : undefined,
-    description: expense.fields.description,
-    VAT: expense.fields.VAT ? parseInt(expense.fields.VAT, 10) : undefined
+    expense: {
+      receipt: receipt.file.file,
+      amount: expense.fields.amount ? parseFloat(expense.fields.amount) : undefined,
+      description: expense.fields.description,
+      VAT: expense.fields.VAT ? parseInt(expense.fields.VAT, 10) : undefined
+    }
   };
   const handleSubmit = (e, claim) => {
     e.preventDefault();
@@ -116,7 +118,7 @@ const ExpenseForm = () => {
       VAT: NON_NEGATIVE.rule
     };
 
-    validateAll(variables, rules, messages)
+    validateAll(variables.expense, rules, messages)
       .then(() => claim())
       .catch(errs => {
         setErrors(formatErrors(errs));

@@ -9,7 +9,7 @@ const Page = ({ children }) => {
   return (
     <div>
       <Menu
-        style={{ fontSize: 'inherit', marginRight: 0, position: 'sticky', top: 0, zIndex: 2000 }}
+        style={{ fontSize: 'inherit', marginRight: 0, position: 'sticky', top: 0, zIndex: 1000 }}
         inverted
       >
         <Link href="/" passHref>
@@ -27,6 +27,9 @@ const Page = ({ children }) => {
           </Link>
           <Link passHref href="/expenses">
             <Menu.Item as="a">Expenses</Menu.Item>
+          </Link>
+          <Link passHref href="/invoices">
+            <Menu.Item as="a">Invoices</Menu.Item>
           </Link>
           <Menu.Menu position="right">
             <Link passHref href="/profile">

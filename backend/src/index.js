@@ -17,6 +17,7 @@ const auth = require('./auth');
 
 const validation = require('./lib/validation');
 const constants = require('./constants');
+const invoiceGen = require('./invoiceGen');
 
 const PORT = process.env.PORT || 4000;
 

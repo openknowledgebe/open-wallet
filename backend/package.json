@@ -20,6 +20,7 @@
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "graphql": "^14.1.1",
+    "html-pdf": "^2.2.0",
     "indicative": "^5.0.8",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.4.19"

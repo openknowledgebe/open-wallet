@@ -37,6 +37,7 @@ const renderUI = (invoice, invoiceFile, errors, success, error, handleSubmit, sa
             onChange={invoiceFile.onChange}
             errorMessage={errors.invoice}
           />
+          {/* TODO company selector & category selector */}
           <InputField
             type="number"
             name="amount"

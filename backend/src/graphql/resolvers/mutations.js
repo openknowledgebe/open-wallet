@@ -1,11 +1,3 @@
-const {
-  validate,
-  registerValidation,
-  updateProfileValidation,
-  expenseValidation,
-  uploadInvoiceValidation
-} = require('../../lib/validation');
-
 const saveOrRetrieveCompany = async (company, Company) => {
   if (!company) return null;
   const { name, id } = company;
@@ -33,7 +25,11 @@ const store = (file, tags, folder, cloudinary) =>
   });
 
 module.exports = {
-  register: async (_, { user }, { models: { User } }) => {
+  register: async (
+    _,
+    { user },
+    { models: { User }, validation: { registerValidation, validate } }
+  ) => {
     const { formatData, rules, messages } = registerValidation;
     await validate(formatData({ ...user }), rules, messages);
 
@@ -48,7 +44,14 @@ module.exports = {
   expenseClaim: async (
     unused,
     { expense },
-    { user, models: { Transaction, User }, cloudinary, db }
+    {
+      user,
+      models: { Transaction, User },
+      cloudinary,
+      db,
+      constants: { TR_TYPE, TR_FLOW },
+      validation: { expenseValidation, validate }
+    }
   ) => {
     expense.date = expense.date || Date.now();
 
@@ -56,8 +59,8 @@ module.exports = {
     await validate(formatData({ ...expense }), rules, messages);
 
     expense.user = user.id;
-    expense.flow = 'IN';
-    expense.type = 'EXPENSE';
+    expense.flow = TR_FLOW.IN;
+    expense.type = TR_TYPE.EXPENSE;
     const receipt = await expense.receipt;
 
     const session = await db.startSession();
@@ -92,7 +95,11 @@ module.exports = {
     }
     return tr;
   },
-  updateProfile: async (_, args, { user, models: { User } }) => {
+  updateProfile: async (
+    _,
+    args,
+    { user, models: { User }, validation: { updateProfileValidation, validate } }
+  ) => {
     const { formatData, rules, messages } = updateProfileValidation;
     await validate(formatData({ ...args.user }), rules, messages);
     const { email } = args.user;
@@ -107,7 +114,12 @@ module.exports = {
   uploadInvoice: async (
     root,
     { invoice },
-    { models: { Transaction, Company, Category }, cloudinary }
+    {
+      models: { Transaction, Company, Category },
+      cloudinary,
+      constants: { TR_TYPE, TR_FLOW },
+      validation: { uploadInvoiceValidation, validate }
+    }
   ) => {
     const { formatData, rules, messages } = uploadInvoiceValidation;
     await validate(formatData({ ...invoice }), rules, messages);
@@ -122,8 +134,8 @@ module.exports = {
       }
       invoice.category = category;
     }
-    invoice.flow = 'IN';
-    invoice.type = 'INVOICE';
+    invoice.flow = TR_FLOW.IN;
+    invoice.type = TR_TYPE.INVOICE;
     invoice.date = invoice.date || Date.now();
     invoice.invoice = await invoice.invoice;
 
@@ -131,17 +143,5 @@ module.exports = {
     invoice.file = file.secure_url;
 
     return new Transaction(invoice).save();
-
-    // console.log(invoice);
   }
 };
-
-// TODO REMOVE EXAMPLE
-// {
-//   "query": "mutation ($amount: Float!, $invoice: Upload!) {expenseClaim(expense: {amount: $amount, invoice: $invoice}) {id flow}}",
-//   "variables": {
-//     "amount": 10,
-//     "description": "Hello World!",
-//     "receipt": null
-//   }
-// }

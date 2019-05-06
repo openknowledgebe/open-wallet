@@ -3,7 +3,7 @@ const FormData = require('form-data');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const { auth } = require('./mocks/index');
-const { db, models, cloudinary, validation } = require('../');
+const { db, models, cloudinary, validation, constants } = require('../');
 const { constructTestServer, startTestServer, populate, clean } = require('./utils');
 
 const {
@@ -191,7 +191,7 @@ describe('Authenticated user', () => {
     beforeAll(() => {
       server = constructTestServer({
         context: () => {
-          return { models, user: loggedUser, auth, cloudinary, db, validation };
+          return { models, user: loggedUser, auth, cloudinary, db, validation, constants };
         }
       });
     });
@@ -235,6 +235,8 @@ describe('Authenticated user', () => {
       let res = await fetch(uri, { method: 'POST', body });
       res = await res.json();
       expect(res.data.expenseClaim.user.expenses.includes(res.data.expenseClaim.id)).toBeTruthy();
+      expect(res.data.expenseClaim.type).toBe(constants.TR_TYPE.EXPENSE);
+      expect(res.data.expenseClaim.flow).toBe(constants.TR_FLOW.IN);
       delete res.data.expenseClaim.id;
       delete res.data.expenseClaim.user.expenses;
       expect(res).toMatchSnapshot();
@@ -248,7 +250,7 @@ describe('Authenticated user', () => {
     beforeAll(() => {
       server = constructTestServer({
         context: () => {
-          return { models, user: loggedUser, auth, cloudinary, db, validation };
+          return { models, user: loggedUser, auth, cloudinary, db, validation, constants };
         }
       });
     });
@@ -283,6 +285,8 @@ describe('Authenticated user', () => {
 
       let res = await fetch(uri, { method: 'POST', body });
       res = await res.json();
+      expect(res.data.uploadInvoice.type).toBe(constants.TR_TYPE.INVOICE);
+      expect(res.data.uploadInvoice.flow).toBe(constants.TR_FLOW.IN);
       delete res.data.uploadInvoice.id;
       expect(res).toMatchSnapshot();
     });

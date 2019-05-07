@@ -169,7 +169,7 @@ module.exports = {
       cloudinary,
       constants: { TR_TYPE, TR_FLOW, STORAGE_PATH },
       validation: { generateInvoiceValidation, validate },
-      invoiceGen
+      generateInvoicePDF
     }
   ) => {
     const { formatData, rules, messages } = generateInvoiceValidation;
@@ -187,7 +187,7 @@ module.exports = {
     const noInvoice = await getInvoiceRef(new Date(invoice.date).getFullYear(), Counter);
     invoice.ref = noInvoice;
 
-    let file = await invoiceGen(
+    let file = await generateInvoicePDF(
       invoice.details,
       {
         date: invoice.date,

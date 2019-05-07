@@ -3,7 +3,7 @@ const FormData = require('form-data');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const { auth } = require('./mocks/index');
-const { db, models, cloudinary, validation, constants, invoiceGen } = require('../');
+const { db, models, cloudinary, validation, constants, generateInvoicePDF } = require('../');
 const { constructTestServer, startTestServer, populate, clean } = require('./utils');
 
 const {
@@ -199,7 +199,7 @@ describe('Authenticated user', () => {
             db,
             validation,
             constants,
-            invoiceGen
+            generateInvoicePDF
           };
         }
       });

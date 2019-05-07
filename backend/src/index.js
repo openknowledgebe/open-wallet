@@ -33,7 +33,7 @@ app.use(
 const context = async ({ req, res }) => {
   const user = await auth.loggedUser(req.cookies, models);
   // adopting injection pattern to ease mocking
-  return { req, res, user, auth, models, cloudinary, db, validation, constants };
+  return { req, res, user, auth, models, cloudinary, db, validation, constants, invoiceGen };
 };
 
 const server = new ApolloServer({

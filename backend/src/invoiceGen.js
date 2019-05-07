@@ -11,7 +11,8 @@ const organization = {
     zipCode: 1000
   },
   VAT: 'BE 0845.419.930',
-  iban: 'BE45 0688 9551 0289'
+  iban: 'BE45 0688 9551 0289',
+  logo: 'https://res.cloudinary.com/dwyxk1pns/image/upload/v1557228337/assets/organization-logo.png'
 };
 
 const renderContactDetails = contact => {
@@ -22,7 +23,7 @@ const renderContactDetails = contact => {
   }`;
 };
 
-const generateInvoice = /* sender */ (details, metadata, receiver) => {
+module.exports = /* sender */ (details, metadata, receiver) => {
   const total = details.reduce((acc, current) => acc + current.amount, 0);
   const amountVAT = (total / 100) * metadata.VAT;
   const totalInclVAT = total + amountVAT;
@@ -64,15 +65,16 @@ const generateInvoice = /* sender */ (details, metadata, receiver) => {
             table {
               font-size: inherit;
               border-collapse: collapse;
-            }
-
-            th:last-child, td:last-child {
-              text-align: right;
               width: 100%;
             }
 
             th:first-child, td:first-child {
-              width: 80%;
+              width: 80%%;
+            }
+
+            th:last-child, td:last-child {
+              text-align: right;
+              width: 20%;
             }
 
             th, td {
@@ -89,7 +91,7 @@ const generateInvoice = /* sender */ (details, metadata, receiver) => {
       <body>
         <header id="pageHeader" >
             <div>${renderContactDetails(organization)}</div>
-            <img width="100px" height="70px" src='https://pbs.twimg.com/profile_images/596612304248025088/NG6C1Wp6_400x400.png'/>
+            <img width="150px" height="70px" src='${organization.logo}'/>
         </header>
         <main>
           <h1 class="capitalize interline">Invoice</h1>
@@ -140,42 +142,9 @@ const generateInvoice = /* sender */ (details, metadata, receiver) => {
       </body>
     </html>`;
   return new Promise((resolve, reject) => {
-    pdf.create(html, options).toFile('./businesscard.pdf', (err, res) => {
+    pdf.create(html, options).toStream((err, res) => {
       if (err) return reject(err);
       return resolve(res);
     });
   });
 };
-
-const receiver = {
-  name: 'PwC Enterprise Advisory cvba,',
-  address: {
-    street: 'Woluwe Garden Woluwedal 18',
-    city: 'Brussel',
-    country: 'Sint-Stevens-Woluwe',
-    zipCode: 1932
-  },
-  VAT: '0415.622.333'
-};
-
-const details = [
-  {
-    description: 'Purchase of the Gold Partner Package for the Open Belgium Conference 2019',
-    amount: 3000
-  },
-  {
-    description: 'Purchase of the Gold Partner Package for the Open Belgium Conference 2019',
-    amount: 3000
-  },
-  {
-    description: 'Purchase of the Gold Partner Package for the Open Belgium Conference 2019',
-    amount: 3000
-  }
-];
-const metadata = {
-  VAT: 21,
-  date: Date.now(),
-  noInvoice: '2019/0005'
-};
-
-generateInvoice(details, metadata, receiver);

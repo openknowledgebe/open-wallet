@@ -24,7 +24,7 @@ const getInvoiceRef = async (id, Counter) => {
   return `${id}/${`${z.repeat(INVOICE_REF_SIZE)}${counter.sequence}`.slice(-INVOICE_REF_SIZE)}`;
 };
 
-const store = (file, tags, folder, cloudinary) =>
+const store = (file, tags, folder, cloudinary, generated) =>
   new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream({ tags, folder }, (err, image) => {
       if (image) {
@@ -32,7 +32,8 @@ const store = (file, tags, folder, cloudinary) =>
       }
       return reject(err);
     });
-    file.createReadStream().pipe(uploadStream);
+    if (!generated) file.createReadStream().pipe(uploadStream);
+    else file.pipe(uploadStream);
   });
 
 module.exports = {
@@ -151,6 +152,40 @@ module.exports = {
     invoice.invoice = await invoice.invoice;
 
     const file = await store(invoice.invoice, 'invoice', '/invoices/pending', cloudinary);
+    invoice.file = file.secure_url;
+
+    return new Transaction(invoice).save();
+  },
+  generateInvoice: async (
+    root,
+    { invoice },
+    {
+      models: { Transaction, Company, Counter },
+      cloudinary,
+      constants: { TR_TYPE, TR_FLOW },
+      validation: { uploadInvoiceValidation, validate },
+      invoiceGen
+    }
+  ) => {
+    const company = await saveOrRetrieveCompany(invoice.company, Company);
+    invoice.company = company;
+    invoice.type = TR_TYPE.INVOICE;
+    invoice.flow = TR_FLOW.OUT;
+    invoice.date = Date.now();
+
+    const noInvoice = await getInvoiceRef(new Date(invoice.date).getFullYear(), Counter);
+
+    let file = await invoiceGen(
+      invoice.details,
+      {
+        date: invoice.date,
+        VAT: invoice.VAT,
+        noInvoice
+      },
+      company
+    );
+
+    file = await store(file, 'invoice', '/invoices/pending', cloudinary, true);
     invoice.file = file.secure_url;
 
     return new Transaction(invoice).save();

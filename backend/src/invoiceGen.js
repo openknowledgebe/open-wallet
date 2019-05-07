@@ -174,7 +174,7 @@ const details = [
 ];
 const metadata = {
   VAT: 21,
-  data: Date.now(),
+  date: Date.now(),
   noInvoice: '2019/0005'
 };
 

@@ -58,6 +58,7 @@ module.exports = gql`
     file: String
     VAT: Int
     type: TransactionType!
+    ref: String
   }
 
   type Category {

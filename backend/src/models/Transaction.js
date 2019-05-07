@@ -48,7 +48,8 @@ const transactionSchema = new Schema({
   type: {
     type: String,
     enum: ['EXPENSE', 'INVOICE']
-  }
+  },
+  ref: String
 });
 
 module.exports = mongoose.model('Transaction', transactionSchema);

@@ -3,7 +3,7 @@ const FormData = require('form-data');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const { auth } = require('./mocks/index');
-const { db, models, cloudinary, validation, constants } = require('../');
+const { db, models, cloudinary, validation, constants, invoiceGen } = require('../');
 const { constructTestServer, startTestServer, populate, clean } = require('./utils');
 
 const {
@@ -13,7 +13,8 @@ const {
   ALL_USERS,
   EXPENSE_CLAIM_WITHOUT_GQL,
   UPDATE_PROFILE,
-  INVOICE_UPLOAD_WITHOUT_GQL
+  INVOICE_UPLOAD_WITHOUT_GQL,
+  GENERATE_INVOICE
 } = require('./graphql/queryStrings');
 
 const testUser = { user: { name: 'Test Test', email: 'test@email.com', password: 'testing0189' } };
@@ -181,6 +182,60 @@ describe('Authenticated user', () => {
       expect(res.data.updateProfile.email).toEqual(user.email);
       expect(res.data.updateProfile.address).toEqual(addr);
       expect(res.data.updateProfile.bankDetails).toEqual(bd);
+    });
+  });
+
+  describe('Generate invoice', () => {
+    let server;
+    let stop;
+    beforeAll(() => {
+      server = constructTestServer({
+        context: () => {
+          return {
+            models,
+            user: loggedUser,
+            auth,
+            cloudinary,
+            db,
+            validation,
+            constants,
+            invoiceGen
+          };
+        }
+      });
+    });
+
+    beforeEach(async () => {
+      const testServer = await startTestServer(server);
+      // eslint-disable-next-line prefer-destructuring
+      stop = testServer.stop;
+    });
+
+    afterEach(async () => {
+      stop();
+    });
+
+    it('succeeds', async () => {
+      const { mutate } = createTestClient(server);
+      const res = await mutate({
+        mutation: GENERATE_INVOICE,
+        variables: {
+          invoice: {
+            VAT: 21,
+            company: {
+              name: 'MY SUPER COMP',
+              VAT: 'MY VAT',
+              address
+            },
+            details: [{ description: 'My description', amount: 200 }]
+          }
+        }
+      });
+      expect(res.data.generateInvoice.id).toBeTruthy();
+      expect(res.data.generateInvoice.ref).toBeTruthy();
+      delete res.data.generateInvoice.id;
+      delete res.data.generateInvoice.ref;
+      expect(res).toMatchSnapshot();
     });
   });
 

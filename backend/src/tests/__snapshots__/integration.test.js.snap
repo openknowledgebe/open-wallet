@@ -1,5 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Authenticated user Generate invoice succeeds 1`] = `
+Object {
+  "data": Object {
+    "generateInvoice": Object {
+      "flow": "OUT",
+      "type": "INVOICE",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
 exports[`Authenticated user Upload invoice succeeds 1`] = `
 Object {
   "data": Object {

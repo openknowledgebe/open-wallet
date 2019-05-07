@@ -46,6 +46,29 @@ Object {
 }
 `;
 
+exports[`Server - e2e Generate invoice requires authenticated user 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You must be logged in.",
+      "path": Array [
+        "generateInvoice",
+      ],
+    },
+  ],
+}
+`;
+
 exports[`Server - e2e Login fails on incorrect email 1`] = `
 Object {
   "data": null,

@@ -105,3 +105,14 @@ module.exports.INVOICE_UPLOAD_WITHOUT_GQL = `
     }
   }
 `;
+
+module.exports.GENERATE_INVOICE = gql`
+  mutation($invoice: GenerateInvoiceInput!) {
+    generateInvoice(invoice: $invoice) {
+      id
+      type
+      flow
+      ref
+    }
+  }
+`;

@@ -193,7 +193,11 @@ exports.generateInvoiceValidation = {
     'details.*.description': `required|max:${MAX_LENGTH}`,
     'details.*.amount': `above:-1|max:${MAX_LENGTH}`,
     VAT: 'above:-1',
-    'company.name': `required|max:${MAX_LENGTH}`
+    'company.name': `required|max:${MAX_LENGTH}`,
+    'company.address.street': `required|max:${MAX_LENGTH}`,
+    'company.address.city': `required|max:${MAX_LENGTH}`,
+    'company.address.zipCode': `required`,
+    'company.address.country': `required|max:${MAX_LENGTH}`
   },
   messages: {
     above: aboveMessage,

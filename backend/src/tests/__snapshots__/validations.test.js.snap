@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GENERATE INVOICE VALIDATION fails max length exceeded 1`] = `
+Array [
+  Object {
+    "details.0.description": "[details.*.description] must have a maximum of 50 characters.",
+  },
+  Object {
+    "company.name": "[company.name] must have a maximum of 50 characters.",
+  },
+  Object {
+    "company.address.street": "[company.address.street] must have a maximum of 50 characters.",
+  },
+  Object {
+    "company.address.city": "[company.address.city] must have a maximum of 50 characters.",
+  },
+  Object {
+    "company.address.country": "[company.address.country] must have a maximum of 50 characters.",
+  },
+]
+`;
+
+exports[`GENERATE INVOICE VALIDATION fails on missing required fields 1`] = `
+Array [
+  Object {
+    "details.0.description": "[details.*.description] is required (cannot be empty)",
+  },
+  Object {
+    "company.name": "[company.name] is required (cannot be empty)",
+  },
+  Object {
+    "company.address.street": "[company.address.street] is required (cannot be empty)",
+  },
+  Object {
+    "company.address.city": "[company.address.city] is required (cannot be empty)",
+  },
+  Object {
+    "company.address.zipCode": "[company.address.zipCode] is required (cannot be empty)",
+  },
+  Object {
+    "company.address.country": "[company.address.country] is required (cannot be empty)",
+  },
+]
+`;

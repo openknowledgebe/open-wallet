@@ -187,3 +187,21 @@ exports.uploadInvoiceValidation = {
   },
   formatData: data => ({ ...data, company: companyValidation.formatData({ ...data.company }) })
 };
+
+exports.generateInvoiceValidation = {
+  rules: {
+    'details.*.description': `required|max:${MAX_LENGTH}`,
+    'details.*.amount': `above:-1|max:${MAX_LENGTH}`,
+    VAT: 'above:-1',
+    'company.name': `required|max:${MAX_LENGTH}`
+  },
+  messages: {
+    above: aboveMessage,
+    max: maxMessage,
+    required: requiredMessage
+  },
+  formatData: data => {
+    data.details = data.details.map(detail => ({ ...detail }));
+    return { ...data, details: [...data.details], company: data.company.toJSON() };
+  }
+};

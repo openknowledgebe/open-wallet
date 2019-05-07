@@ -1,4 +1,4 @@
-const saveOrRetrieveCompany = async (company, Company) => {
+const saveOrRetrieveCompany = async (company, Company, upsert) => {
   if (!company) return null;
   const { name, id } = company;
   if (!name && !id) return null;
@@ -6,9 +6,7 @@ const saveOrRetrieveCompany = async (company, Company) => {
     return Company.findById(id);
   }
   if (company) {
-    const cmpny = await Company.findOne({ name });
-    if (cmpny) return cmpny;
-    return new Company(company).save();
+    return Company.findOneAndUpdate({ name }, company, { new: true, upsert });
   }
   return null;
 };
@@ -61,7 +59,7 @@ module.exports = {
       models: { Transaction, User },
       cloudinary,
       db,
-      constants: { TR_TYPE, TR_FLOW },
+      constants: { TR_TYPE, TR_FLOW, STORAGE_PATH },
       validation: { expenseValidation, validate }
     }
   ) => {
@@ -79,7 +77,12 @@ module.exports = {
     let tr;
     try {
       // upload the file to cloudinary
-      const file = await store(receipt, 'expense receipt', '/expenses/pending/', cloudinary);
+      const file = await store(
+        receipt,
+        'expense receipt',
+        STORAGE_PATH.EXPENSE_PENDING,
+        cloudinary
+      );
       expense.file = file.secure_url;
 
       const opts = { session };
@@ -129,13 +132,15 @@ module.exports = {
     {
       models: { Transaction, Company, Category },
       cloudinary,
-      constants: { TR_TYPE, TR_FLOW },
+      constants: { TR_TYPE, TR_FLOW, STORAGE_PATH },
       validation: { uploadInvoiceValidation, validate }
     }
   ) => {
     const { formatData, rules, messages } = uploadInvoiceValidation;
     await validate(formatData({ ...invoice }), rules, messages);
-    const company = await saveOrRetrieveCompany(invoice.company, Company);
+
+    // look for a company (by id or name), if name is provided: update it or save it if doesn't exist
+    const company = await saveOrRetrieveCompany(invoice.company, Company, true);
     invoice.company = company;
     if (invoice.category && (invoice.category.name || invoice.category.id)) {
       const category = Category.findOne({
@@ -151,7 +156,7 @@ module.exports = {
     invoice.date = invoice.date || Date.now();
     invoice.invoice = await invoice.invoice;
 
-    const file = await store(invoice.invoice, 'invoice', '/invoices/pending', cloudinary);
+    const file = await store(invoice.invoice, 'invoice', STORAGE_PATH.INVOICE_PENDING, cloudinary);
     invoice.file = file.secure_url;
 
     return new Transaction(invoice).save();
@@ -162,18 +167,25 @@ module.exports = {
     {
       models: { Transaction, Company, Counter },
       cloudinary,
-      constants: { TR_TYPE, TR_FLOW },
-      validation: { uploadInvoiceValidation, validate },
+      constants: { TR_TYPE, TR_FLOW, STORAGE_PATH },
+      validation: { generateInvoiceValidation, validate },
       invoiceGen
     }
   ) => {
-    const company = await saveOrRetrieveCompany(invoice.company, Company);
+    const { formatData, rules, messages } = generateInvoiceValidation;
+
+    // look for a company (by id or name), if name is provided: update it or save it if doesn't exist
+    const company = await saveOrRetrieveCompany(invoice.company, Company, true);
     invoice.company = company;
+
+    //  validate the inputs with the retrieved company, will throw if any required element is missing
+    await validate(formatData(invoice), rules, messages);
     invoice.type = TR_TYPE.INVOICE;
     invoice.flow = TR_FLOW.OUT;
     invoice.date = Date.now();
 
     const noInvoice = await getInvoiceRef(new Date(invoice.date).getFullYear(), Counter);
+    invoice.ref = noInvoice;
 
     let file = await invoiceGen(
       invoice.details,
@@ -182,10 +194,10 @@ module.exports = {
         VAT: invoice.VAT,
         noInvoice
       },
-      company
+      invoice.company
     );
 
-    file = await store(file, 'invoice', '/invoices/pending', cloudinary, true);
+    file = await store(file, 'invoice', STORAGE_PATH.INVOICE_PENDING, cloudinary, true);
     invoice.file = file.secure_url;
 
     return new Transaction(invoice).save();

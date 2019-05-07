@@ -13,6 +13,17 @@ const saveOrRetrieveCompany = async (company, Company) => {
   return null;
 };
 
+const getInvoiceRef = async (id, Counter) => {
+  const counter = await Counter.findByIdAndUpdate(
+    id,
+    { $inc: { sequence: 1 } },
+    { new: true, upsert: true }
+  );
+  const INVOICE_REF_SIZE = process.env.INVOICE_REF_SIZE || 4;
+  const z = '0';
+  return `${id}/${`${z.repeat(INVOICE_REF_SIZE)}${counter.sequence}`.slice(-INVOICE_REF_SIZE)}`;
+};
+
 const store = (file, tags, folder, cloudinary) =>
   new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream({ tags, folder }, (err, image) => {

@@ -19,6 +19,7 @@ module.exports = gql`
     expenseClaim(expense: Expense!): Transaction! @auth
     updateProfile(user: UserUpdateInput!): User! @auth
     uploadInvoice(invoice: InvoiceUpload!): Transaction! @auth
+    generateInvoice(invoice: GenerateInvoiceInput!): Transaction! @auth
   }
   type Success {
     status: Boolean!
@@ -130,6 +131,17 @@ module.exports = gql`
     VAT: String
     bankDetails: BankDetailsInput
     address: AdressInput
+  }
+
+  input GenerateInvoiceInput {
+    company: CompanyInput!
+    details: [GenerateInvoiceDetailsInput!]!
+    VAT: Int!
+  }
+
+  input GenerateInvoiceDetailsInput {
+    description: String!
+    amount: Float!
   }
 
   #enums

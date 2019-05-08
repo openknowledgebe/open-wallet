@@ -5,6 +5,7 @@ const {
     updateProfileValidation,
     expenseValidation,
     uploadInvoiceValidation,
+    generateInvoiceValidation,
     validate
   }
 } = require('../');
@@ -29,6 +30,13 @@ const bankDetails = {
   bic: 'MY BIC'
 };
 const FIFTYONECHARSSTR = 'QYE5TOXWrDbi0bSQDbM1KmKOljjR5SihgUJO7aDwkkjUJVJOzk6';
+
+const addressExceedingMaxLength = {
+  street: FIFTYONECHARSSTR,
+  city: FIFTYONECHARSSTR,
+  country: FIFTYONECHARSSTR,
+  zipCode: 1000
+};
 
 describe('EXPENSE CLAIM VALIDATION', () => {
   const { messages, rules } = expenseValidation;
@@ -386,5 +394,69 @@ describe('UPLOAD INVOICE VALIDATION', () => {
         } else throw error;
       }
     });
+  });
+});
+
+describe('GENERATE INVOICE VALIDATION', () => {
+  const { messages, rules } = generateInvoiceValidation;
+  const invoice = {
+    VAT: 21,
+    company: {
+      name: 'MY SUPER COMP',
+      VAT: 'MY VAT',
+      address
+    },
+    details: [{ description: 'My description', amount: 200 }]
+  };
+  it('passes validation', async () => {
+    await validate(invoice, rules, messages);
+  });
+  it('fails on missing required fields', async () => {
+    try {
+      await validate({ details: [{}] }, rules, messages);
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        expect(JSON.parse(error.message)).toMatchSnapshot();
+      } else throw error;
+    }
+  });
+  it('fails on negative value', async () => {
+    try {
+      await validate(
+        { ...invoice, VAT: -1, details: [{ description: 'My description', amount: -1 }] },
+        rules,
+        messages
+      );
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        const message = JSON.parse(error.message);
+        expect(message[1].VAT).toBeTruthy();
+        expect(message[0]['details.0.amount']).toBeTruthy();
+      } else throw error;
+    }
+  });
+  it('fails max length exceeded', async () => {
+    try {
+      await validate(
+        {
+          VAT: 10,
+          details: [{ description: FIFTYONECHARSSTR, amount: 300 }],
+          company: {
+            name: FIFTYONECHARSSTR,
+            address: addressExceedingMaxLength,
+            VAT: FIFTYONECHARSSTR
+          }
+        },
+        rules,
+        messages
+      );
+      expect(false).toBe(true);
+    } catch (error) {
+      if (error instanceof UserInputError) {
+        expect(JSON.parse(error.message)).toMatchSnapshot();
+      } else throw error;
+    }
   });
 });

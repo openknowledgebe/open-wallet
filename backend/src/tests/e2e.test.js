@@ -12,7 +12,8 @@ const {
   ALL_USERS,
   UPDATE_PROFILE,
   EXPENSE_CLAIM_WITHOUT_GQL,
-  INVOICE_UPLOAD_WITHOUT_GQL
+  INVOICE_UPLOAD_WITHOUT_GQL,
+  GENERATE_INVOICE
 } = require('./graphql/queryStrings');
 
 const testUser = { user: { name: 'Test Test', email: 'tesT@email.com', password: 'testing0189' } };
@@ -210,6 +211,28 @@ describe('Server - e2e', () => {
       body.append('0', 'a', { filename: 'a.pdf' });
       let res = await fetch(uri, { method: 'POST', body });
       res = await res.json();
+      expect(res).toMatchSnapshot();
+    });
+  });
+
+  describe('Generate invoice', () => {
+    it('requires authenticated user', async () => {
+      const res = await toPromise(
+        graphql({
+          query: GENERATE_INVOICE,
+          variables: {
+            invoice: {
+              VAT: 21,
+              company: {
+                name: 'MY SUPER COMP',
+                VAT: 'MY VAT',
+                address: { street: '', country: '', city: '', zipCode: 0 }
+              },
+              details: [{ description: '', amount: 200 }]
+            }
+          }
+        })
+      );
       expect(res).toMatchSnapshot();
     });
   });

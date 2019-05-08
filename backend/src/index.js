@@ -16,6 +16,8 @@ const db = require('./db');
 const auth = require('./auth');
 
 const validation = require('./lib/validation');
+const constants = require('./constants');
+const generateInvoicePDF = require('./invoiceFactory');
 
 const PORT = process.env.PORT || 4000;
 
@@ -31,7 +33,18 @@ app.use(
 const context = async ({ req, res }) => {
   const user = await auth.loggedUser(req.cookies, models);
   // adopting injection pattern to ease mocking
-  return { req, res, user, auth, models, cloudinary, db, validation };
+  return {
+    req,
+    res,
+    user,
+    auth,
+    models,
+    cloudinary,
+    db,
+    validation,
+    constants,
+    generateInvoicePDF
+  };
 };
 
 const server = new ApolloServer({
@@ -72,5 +85,7 @@ module.exports = {
   server,
   app,
   cloudinary,
-  validation
+  validation,
+  constants,
+  generateInvoicePDF
 };

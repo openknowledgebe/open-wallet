@@ -85,9 +85,11 @@ module.exports.startTestServer = startTestServer;
 
 // clean database
 const clean = async () => {
-  const { User, Transaction } = models;
+  const { User, Transaction, Company, Counter } = models;
   await User.deleteMany({});
   await Transaction.deleteMany({});
+  await Company.deleteMany({});
+  await Counter.deleteMany({});
 };
 
 // populate database

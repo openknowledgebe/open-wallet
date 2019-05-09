@@ -10,6 +10,7 @@ module.exports = gql`
     me: User @auth
     myExpenses: [Transaction]! @auth
     transactions: [Transaction]! @auth
+    companies: [Company] @auth
   }
 
   type Mutation {

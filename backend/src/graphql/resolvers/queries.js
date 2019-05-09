@@ -9,5 +9,6 @@ module.exports = {
     });
     return expenses;
   },
-  transactions: (root, args, { models: { Transaction } }) => Transaction.find()
+  transactions: (root, args, { models: { Transaction } }) => Transaction.find(),
+  companies: (root, args, { models: { Company } }) => Company.find()
 };

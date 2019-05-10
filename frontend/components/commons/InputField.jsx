@@ -29,7 +29,7 @@ const InputField = ({
         name={name}
         type={type}
         disabled={disabled}
-        value={value}
+        value={value === null ? undefined : value}
         onChange={onChange}
         autoFocus={autoFocus}
         action={action}

@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, Form, Grid, Icon, Dropdown, Label, Modal, Popup } from 'semantic-ui-react';
-import { Query } from 'react-apollo';
+import { Query, Mutation } from 'react-apollo';
 import styled from 'styled-components';
 import InputField from './commons/InputField';
 import useFormInput from './hooks/useFormInput';
-import { QUERY_COMPANIES } from '../graphql/queries';
+import { QUERY_COMPANIES, GENERATE_INVOICE } from '../graphql/queries';
 import { companyType } from '../types';
+import ErrorMessage from './commons/ErrorMessage';
+import InfoMessage from './commons/InfoMessage';
 
 const CompanyDropdownStyle = styled.div`
   display: flex;
@@ -111,8 +113,7 @@ const Company = ({ companies, selectedCompany: { selectedCompany, setSelectedCom
   const formattedCompanies = $companies.map(company => ({
     value: company.name,
     text: company.name,
-    key: company.name,
-    selected: company.name === selectedCompany.name
+    key: company.name
   }));
 
   const addCompany = (e, { value }) => {
@@ -178,7 +179,7 @@ const Company = ({ companies, selectedCompany: { selectedCompany, setSelectedCom
               id="invoice-gen-company-name"
               value={selectedCompany.name}
               onChange={handleCompanyFieldsChange}
-              disabled={!!selectedCompany.name}
+              disabled={selectedCompany.disableName}
             />
             <InputField
               name="VAT"
@@ -186,7 +187,7 @@ const Company = ({ companies, selectedCompany: { selectedCompany, setSelectedCom
               value={selectedCompany.VAT}
               onChange={handleCompanyFieldsChange}
               id="invoice-gen-company-vat-name"
-              disabled={!!selectedCompany.VAT}
+              disabled={selectedCompany.disableVAT}
             />
             <InputField
               id="invoice-gen-company-address-street"
@@ -244,9 +245,25 @@ Company.propTypes = {
   }).isRequired
 };
 
-const renderUI = (details, companies, selectedCompany, vat, handleSubmit) => {
+const renderUI = (details, companies, selectedCompany, vat, handleSubmit, save, loading, state) => {
   return (
-    <Form size="massive" onSubmit={handleSubmit}>
+    <Form
+      size="massive"
+      onSubmit={e => handleSubmit(e, save)}
+      error={!!state.error}
+      success={!!state.data}
+      loading={loading}
+    >
+      {state.error && <ErrorMessage error={state.error} />}
+      {state.data && (
+        <InfoMessage>
+          Success! The invoice has been generated! Click{' '}
+          <a target="_blank" rel="noopener noreferrer" href={state.data.generateInvoice.file}>
+            here
+          </a>{' '}
+          to download (you can also grab the link and send it by email).
+        </InfoMessage>
+      )}
       <Company selectedCompany={selectedCompany} companies={companies} />
       <Details details={details} />
       <InputField label="VAT (%)" name="VAT" id="invoice-gen-form-vat" {...vat} />
@@ -257,15 +274,51 @@ const renderUI = (details, companies, selectedCompany, vat, handleSubmit) => {
   );
 };
 
-const FormManager = ({ data }) => {
+const FormManager = ({ companies }) => {
   const [details, setDetail] = useState([{ id: 0 }]);
   const [selectedCompany, setSelectedCompany] = useState({});
   const vat = useFormInput(21);
+  const [state, setState] = useState({ success: false });
 
-  const handleSubmit = e => {
+  const expandedCompanies = companies.map(c => ({
+    ...c,
+    disableName: !!c.name,
+    disableVAT: !!c.VAT
+  }));
+
+  const variables = {
+    invoice: {
+      VAT: vat.value,
+      company: {
+        name: selectedCompany.name,
+        VAT: selectedCompany.VAT,
+        address: {
+          street: selectedCompany.street,
+          city: selectedCompany.city,
+          zipCode: selectedCompany.zipCode
+            ? Number.parseInt(selectedCompany.zipCode, 10)
+            : undefined,
+          country: selectedCompany.country
+        }
+      },
+      details: details.map(detail => ({
+        description: detail.description,
+        amount: detail.amount ? Number.parseFloat(detail.amount) : undefined
+      }))
+    }
+  };
+
+  const handleCompleted = data => {
+    setState({ data });
+  };
+
+  const handleError = error => setState({ error });
+
+  const handleSubmit = (e, save) => {
     e.preventDefault();
-    console.log(selectedCompany);
-    console.log(details);
+    console.log(variables);
+    setState({});
+    save();
   };
 
   return (
@@ -274,23 +327,47 @@ const FormManager = ({ data }) => {
         <h2>Generate an invoice</h2>
       </Card.Content>
       <Card.Content>
-        {renderUI(
-          { details, setDetail },
-          data.companies,
-          {
-            selectedCompany,
-            setSelectedCompany
-          },
-          vat,
-          handleSubmit
-        )}
+        <Mutation
+          mutation={GENERATE_INVOICE}
+          onCompleted={handleCompleted}
+          onError={handleError}
+          variables={variables}
+        >
+          {(save, { loading }) =>
+            renderUI(
+              { details, setDetail },
+              expandedCompanies,
+              {
+                selectedCompany,
+                setSelectedCompany
+              },
+              vat,
+              handleSubmit,
+              save,
+              loading,
+              state
+            )
+          }
+        </Mutation>
       </Card.Content>
     </Card>
   );
 };
 
+FormManager.defaultProps = {
+  companies: []
+};
+
+FormManager.propTypes = {
+  companies: PropTypes.arrayOf(companyType)
+};
+
 const Main = () => {
-  return <Query query={QUERY_COMPANIES}>{({ data }) => <FormManager data={data} />}</Query>;
+  return (
+    <Query query={QUERY_COMPANIES}>
+      {({ data }) => <FormManager companies={data.companies} />}
+    </Query>
+  );
 };
 
 export default Main;

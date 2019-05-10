@@ -90,3 +90,14 @@ export const LOG_ME_OUT = gql`
     logout
   }
 `;
+
+export const GENERATE_INVOICE = gql`
+  mutation($invoice: GenerateInvoiceInput!) {
+    generateInvoice(invoice: $invoice) {
+      id
+      type
+      flow
+      file
+    }
+  }
+`;

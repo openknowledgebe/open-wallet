@@ -60,6 +60,10 @@ const GlobalStyle = createGlobalStyle`
   h4 {
     font-size: 1.6rem;
   }
+
+  .ui.dropdown .menu>.item {
+    font-size: inherit;
+  }
 `;
 
 class MyApp extends App {

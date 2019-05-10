@@ -18,3 +18,10 @@ export const userType = shape({
   bankDetails: bankDetailsType,
   address: addressType
 });
+
+export const companyType = shape({
+  name: string,
+  bankDetails: bankDetailsType,
+  address: addressType,
+  VAT: string
+});

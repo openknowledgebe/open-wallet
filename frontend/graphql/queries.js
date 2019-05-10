@@ -28,6 +28,25 @@ export const QUERY_ME = gql`
   }
 `;
 
+export const QUERY_COMPANIES = gql`
+  query COMPANIES {
+    companies {
+      name
+      VAT
+      bankDetails {
+        iban
+        bic
+      }
+      address {
+        street
+        city
+        country
+        zipCode
+      }
+    }
+  }
+`;
+
 export const LOG_ME_IN = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {

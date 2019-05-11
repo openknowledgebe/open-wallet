@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, Form, Grid, Icon, Dropdown, Label, Modal, Popup } from 'semantic-ui-react';
+import { validateAll } from 'indicative';
 import { Query, Mutation } from 'react-apollo';
 import styled from 'styled-components';
 import InputField from './commons/InputField';
@@ -11,6 +12,8 @@ import { QUERY_COMPANIES, GENERATE_INVOICE } from '../graphql/queries';
 import { companyType } from '../types';
 import ErrorMessage from './commons/ErrorMessage';
 import InfoMessage from './commons/InfoMessage';
+import { NON_NEGATIVE } from '../lib/validation';
+import formatErrors from '../lib/formatErrors';
 
 const CompanyDropdownStyle = styled.div`
   display: flex;
@@ -19,14 +22,11 @@ const CompanyDropdownStyle = styled.div`
     width: 100%;
     padding-right: 5px;
   }
-  i {
-    align-self: center;
-  }
 `;
 
-const Details = ({ details: { details, setDetail } }) => {
+const Details = ({ details: { details, setDetail }, errors }) => {
   const addDetail = () => {
-    setDetail([...details, { id: details.length }]);
+    setDetail([...details, { id: details[details.length - 1].id + 1 }]);
   };
 
   const removeDetail = idx => {
@@ -54,6 +54,7 @@ const Details = ({ details: { details, setDetail } }) => {
                 id={`invoice-gen-form-description-${idx}`}
                 onChange={e => handleDetailChange(e, idx)}
                 value={detail.description}
+                errorMessage={errors[`details.${idx}.description`]}
                 name="description"
                 label="Description"
               />
@@ -64,6 +65,7 @@ const Details = ({ details: { details, setDetail } }) => {
                 onChange={e => handleDetailChange(e, idx)}
                 value={detail.amount}
                 placeholder="Excluding VAT"
+                errorMessage={errors[`details.${idx}.amount`]}
                 name="amount"
                 label="Amount (€)"
                 type="number"
@@ -96,9 +98,16 @@ Details.propTypes = {
   }).isRequired
 };
 
-const Company = ({ companies, selectedCompany: { selectedCompany, setSelectedCompany } }) => {
+const Company = ({
+  companies,
+  selectedCompany: { selectedCompany, setSelectedCompany },
+  errors
+}) => {
   const [$companies, setCompanies] = useState(companies || []);
   const [companyModalStatus, setCompanyModalStatus] = useState(false);
+
+  const errorMessage =
+    errors['company.name'] || errors[Object.keys(errors).find(k => k.includes('company.'))];
 
   const toggleCompanyModal = () => {
     if (companyModalStatus) {
@@ -138,7 +147,7 @@ const Company = ({ companies, selectedCompany: { selectedCompany, setSelectedCom
 
   return (
     <CompanyDropdownStyle>
-      <Form.Field>
+      <Form.Field error={!!errorMessage}>
         <label htmlFor="invoice-gen-form-dropdown">Company</label>
         <Dropdown
           placeholder="Choose or add a name"
@@ -152,6 +161,11 @@ const Company = ({ companies, selectedCompany: { selectedCompany, setSelectedCom
           onAddItem={addCompany}
           onChange={handleCompanyName}
         />
+        {errorMessage && (
+          <Label size="big" basic color="red" pointing>
+            {errorMessage}
+          </Label>
+        )}
       </Form.Field>
       <Popup
         style={{ fontSize: 'inherit', color: 'red' }}
@@ -245,7 +259,17 @@ Company.propTypes = {
   }).isRequired
 };
 
-const renderUI = (details, companies, selectedCompany, vat, handleSubmit, save, loading, state) => {
+const renderUI = (
+  details,
+  companies,
+  selectedCompany,
+  vat,
+  handleSubmit,
+  save,
+  loading,
+  state,
+  errors
+) => {
   return (
     <Form
       size="massive"
@@ -264,9 +288,15 @@ const renderUI = (details, companies, selectedCompany, vat, handleSubmit, save, 
           to download (you can also grab the link and send it by email).
         </InfoMessage>
       )}
-      <Company selectedCompany={selectedCompany} companies={companies} />
-      <Details details={details} />
-      <InputField label="VAT (%)" name="VAT" id="invoice-gen-form-vat" {...vat} />
+      <Company selectedCompany={selectedCompany} companies={companies} errors={errors} />
+      <Details details={details} errors={errors} />
+      <InputField
+        label="VAT (%)"
+        name="VAT"
+        id="invoice-gen-form-vat"
+        {...vat}
+        errorMessage={errors.VAT}
+      />
       <Button primary size="massive">
         Generate
       </Button>
@@ -279,6 +309,7 @@ const FormManager = ({ companies }) => {
   const [selectedCompany, setSelectedCompany] = useState({});
   const vat = useFormInput(21);
   const [state, setState] = useState({ success: false });
+  const [errors, setErrors] = useState({});
 
   const expandedCompanies = companies.map(c => ({
     ...c,
@@ -316,9 +347,44 @@ const FormManager = ({ companies }) => {
 
   const handleSubmit = (e, save) => {
     e.preventDefault();
-    console.log(variables);
     setState({});
-    save();
+    setErrors({});
+
+    const rules = {
+      VAT: `required|${NON_NEGATIVE.rule}`,
+      'details.*.amount': `required|${NON_NEGATIVE.rule}`,
+      'details.*.description': 'required',
+      'company.VAT': 'required',
+      'company.name': 'required',
+      'company.address.street': 'required',
+      'company.address.city': 'required',
+      'company.address.zipCode': 'required',
+      'company.address.country': 'required'
+    };
+
+    const messages = {
+      above: NON_NEGATIVE.message,
+      'VAT.required': 'VAT is required.',
+      'details.*.amount.required': 'Amount is required.',
+      'details.*.description.required': 'Description is required.',
+      'company.VAT.required':
+        'Incomplete company, please update it by clicking on the edit button.',
+      'company.name.required': 'Please select or add a company.',
+      'company.address.street.required':
+        'Incomplete company, please update it by clicking on the edit button.',
+      'company.address.city.required':
+        'Incomplete company, please update it by clicking on the edit button.',
+      'company.address.zipCode.required':
+        'Incomplete company, please update it by clicking on the edit button.',
+      'company.address.country.required':
+        'Incomplete company, please update it by clicking on the edit button.'
+    };
+
+    validateAll(variables.invoice, rules, messages)
+      .then(() => save())
+      .catch(errs => {
+        setErrors(formatErrors(errs));
+      });
   };
 
   return (
@@ -345,7 +411,8 @@ const FormManager = ({ companies }) => {
               handleSubmit,
               save,
               loading,
-              state
+              state,
+              errors
             )
           }
         </Mutation>

@@ -72,7 +72,6 @@ if (process.env.NODE_ENV !== 'test') {
 module.exports = {
   models,
   typeDefs,
-  // TODO exports resolvers in their on folder via index
   resolvers: {
     Query,
     Mutation

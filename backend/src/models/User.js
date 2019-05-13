@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 const address = require('./address');
 const bankDetails = require('./bankDetails');
 
+const HASH_FACTOR = process.env.HASH_FACTOR || 10;
+
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
@@ -30,6 +32,11 @@ const userSchema = new Schema({
   ]
 });
 
+/**
+ * Mongoose middleware.
+ * Hash the password and check for email existance.
+ * @throws {Error} if email found
+ */
 userSchema.pre('save', async function() {
   const { email } = this;
   // accessing the constructor to make request against the db
@@ -38,20 +45,25 @@ userSchema.pre('save', async function() {
     throw new Error('Email already exists!');
   }
   if (this.isModified('password')) {
-    // TODO Retrieve hash factor from env
-    this.password = await bcrypt.hash(this.password, 10);
+    this.password = await bcrypt.hash(this.password, HASH_FACTOR);
   }
 });
 
+/**
+ * Mongoose middleware.
+ * Hash the password if provided.
+ */
 userSchema.pre('findOneAndUpdate', async function() {
   const input = this.getUpdate();
   const { password } = input;
   if (password) {
-    // TODO Retrieve hash factor from env
-    this.getUpdate().password = await bcrypt.hash(password, 10);
+    this.getUpdate().password = await bcrypt.hash(password, HASH_FACTOR);
   }
 });
 
+/**
+ * Expose bcrypt compare function.
+ */
 userSchema.methods.rightPassword = async function(password) {
   return bcrypt.compare(password, this.password);
 };

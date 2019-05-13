@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/label-has-for */
 import React, { useState } from 'react';
@@ -95,7 +96,9 @@ Details.propTypes = {
       })
     ),
     setDetail: PropTypes.func
-  }).isRequired
+  }).isRequired,
+  // eslint-disable-next-line react/require-default-props
+  errors: PropTypes.object.isRequired
 };
 
 const Company = ({
@@ -256,7 +259,9 @@ Company.propTypes = {
   selectedCompany: PropTypes.shape({
     selectedCompany: companyType,
     setSelectedCompany: PropTypes.func
-  }).isRequired
+  }).isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  errors: PropTypes.object.isRequired
 };
 
 const renderUI = (

@@ -2,6 +2,7 @@ const pdf = require('html-pdf');
 
 const options = { format: 'Letter' };
 
+// TODO retrieve from the database
 const organization = {
   name: 'Open Knowledge Belgium vzw',
   address: {
@@ -23,7 +24,16 @@ const renderContactDetails = contact => {
   }`;
 };
 
-module.exports = /* sender */ (details, metadata, receiver) => {
+/**
+ * Generate an invoice.
+ * @example
+ * generateInvoice({[description: "", amount: 0]}, {VAT: 21, date: 13/05/2019, noInvoice: "2019/00001"}, company: Company)
+ * @param {object} details - invoice details (see example)
+ * @param {object} metadata - invoice metadata (see example)
+ * @param {Company} company buying company
+ * @returns {Promise} Promise that represents the file stream or an error
+ */
+module.exports = (details, metadata, receiver) => {
   const total = details.reduce((acc, current) => acc + current.amount, 0);
   const amountVAT = (total / 100) * metadata.VAT;
   const totalInclVAT = total + amountVAT;

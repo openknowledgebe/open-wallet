@@ -29,7 +29,7 @@ const loggedUser = async ({ token }, { User }) => {
 /**
  * Returns whether a user is logged in or not.
  * @param { object } user - logged in user
- * @returns {boolean} True of false
+ * @returns {boolean} True or false
  */
 const loggedIn = ({ user }) => !!user;
 

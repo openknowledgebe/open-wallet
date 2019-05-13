@@ -1,3 +1,4 @@
+// This schema is meant to be a subdocument common to several documents
 const mongoose = require('mongoose');
 
 const { Schema } = mongoose;

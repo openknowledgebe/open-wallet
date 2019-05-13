@@ -1,3 +1,8 @@
+/**
+ * Gather constants that are neither env variables nor messages.
+ * TR = transaction
+ */
+
 exports.TR_FLOW = {
   IN: 'IN',
   OUT: 'OUT'

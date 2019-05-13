@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+/**
+ * Open connection to the database and creates collections.
+ */
 module.exports.connect = async () => {
   return mongoose
     .connect(process.env.MONGODB_URI, {
@@ -21,6 +24,9 @@ module.exports.connect = async () => {
     });
 };
 
+/**
+ * Close the database connection. Used in tests.
+ */
 module.exports.disconnect = async () => {
   return mongoose
     .disconnect()
@@ -30,4 +36,7 @@ module.exports.disconnect = async () => {
     });
 };
 
+/**
+ * Expose mongoose startSession function.
+ */
 module.exports.startSession = async () => mongoose.startSession();

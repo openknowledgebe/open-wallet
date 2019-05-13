@@ -1,4 +1,6 @@
-// export constant messages
+/**
+ * Gather constant (format of) messages that are sent to the client.
+ */
 module.exports = {
   MUST_LOGIN: 'You must be logged in.',
   MUST_LOGOUT: 'You must be logged out.',

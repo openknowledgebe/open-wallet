@@ -1,4 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
+
+/**
+ * inspired by: https://github.com/apollographql/fullstack-tutorial/blob/master/final/server/src/__tests__/__utils.js
+ */
+
 const { HttpLink } = require('apollo-link-http');
 const fetch = require('node-fetch');
 const { execute, toPromise } = require('apollo-link');
@@ -58,32 +63,11 @@ const startTestServer = async server => {
   };
 };
 
-// /**
-//  * Upload server
-//  */
-// const startTestUploadServer = async server => {
-//   server.applyMiddleware({ app });
-//   const httpServer = await app.listen(0);
-
-//   const link = new HttpLink({
-//     uri: `http://localhost:${httpServer.address().port}${server.graphqlPath}`,
-//     fetch
-//   });
-
-//   const executeOperation = ({ query, variables = {} }) => execute(link, { query, variables });
-
-//   return {
-//     link,
-//     stop: async () => {
-//       httpServer.close();
-//     },
-//     graphql: executeOperation
-//   };
-// };
-
 module.exports.startTestServer = startTestServer;
 
-// clean database
+/**
+ * Cleans the database.
+ */
 const clean = async () => {
   const { User, Transaction, Company, Counter } = models;
   await User.deleteMany({});
@@ -92,8 +76,9 @@ const clean = async () => {
   await Counter.deleteMany({});
 };
 
-// populate database
-
+/**
+ * Populates the database with mock data.
+ */
 const populate = async () => {
   const { User } = models;
 

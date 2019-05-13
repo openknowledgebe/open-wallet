@@ -8,8 +8,13 @@ const ErrorMessage = ({ error }) => {
       <Icon name="warning circle" />
       {error && (
         <Message.Content>
-          <p>{error.message}</p>
-          <p>Please make sure to provide all required fieds.</p>
+          {error.networkError && (
+            <p>
+              Network error! Please check your internet connection and make sure to provide all
+              required values.
+            </p>
+          )}
+          {error.graphQLErrors && error.graphQLErrors.map(err => <p>{err.message}</p>)}
         </Message.Content>
       )}
     </Message>

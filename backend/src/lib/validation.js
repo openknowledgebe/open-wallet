@@ -1,4 +1,8 @@
 /* eslint-disable no-useless-escape */
+/**
+ * We are using the api of the library indicative to achieve user input validation.
+ * Please refer to the doc: http://indicative.adonisjs.com/
+ */
 const { validateAll, configure } = require('indicative');
 const { UserInputError } = require('apollo-server-express');
 const {

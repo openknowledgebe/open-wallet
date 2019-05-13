@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const address = require('./address');
 const bankDetails = require('./bankDetails');
 
-const HASH_FACTOR = parseInt(process.env.HASH_FACTOR, 10) || 10;
+const HASH_ROUNDS = parseInt(process.env.HASH_ROUNDS, 10) || 10;
 
 const { Schema } = mongoose;
 
@@ -45,7 +45,7 @@ userSchema.pre('save', async function() {
     throw new Error('Email already exists!');
   }
   if (this.isModified('password')) {
-    this.password = await bcrypt.hash(this.password, HASH_FACTOR);
+    this.password = await bcrypt.hash(this.password, HASH_ROUNDS);
   }
 });
 
@@ -57,7 +57,7 @@ userSchema.pre('findOneAndUpdate', async function() {
   const input = this.getUpdate();
   const { password } = input;
   if (password) {
-    this.getUpdate().password = await bcrypt.hash(password, HASH_FACTOR);
+    this.getUpdate().password = await bcrypt.hash(password, HASH_ROUNDS);
   }
 });
 

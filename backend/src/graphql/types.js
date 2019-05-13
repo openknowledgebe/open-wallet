@@ -6,21 +6,31 @@ module.exports = gql`
 
   # types
   type Query {
-    users: [User]! @auth
+    "Returns all the users - inaccessible for unauthenticated users"
+    users: [User]! @auth #TODO restrict access
+    "Returns the authenticated user profile"
     me: User @auth
+    "Returns the authenticated user expenses"
     myExpenses: [Transaction]! @auth
-    transactions: [Transaction]! @auth
+    "Returns all transactions - inaccessible for unauthenticated users"
+    transactions: [Transaction]! @auth #TODO restrict access
+    "Returns all companies - inaccessible for unauthenticated users"
     companies: [Company] @auth
   }
 
   type Mutation {
+    "Registers a user"
     register(user: UserInput!): User! @guest
     logout: Boolean!
     login(email: String!, password: String!): User! @guest
+    "Handles expense claims - inaccessible for unauthenticated users"
     expenseClaim(expense: Expense!): Transaction! @auth
+    "Handles profile updates - inaccessible for unauthenticated users"
     updateProfile(user: UserUpdateInput!): User! @auth
-    uploadInvoice(invoice: InvoiceUpload!): Transaction! @auth
-    generateInvoice(invoice: GenerateInvoiceInput!): Transaction! @auth
+    "Handles invoice uploads - inaccessible for unauthenticated users"
+    uploadInvoice(invoice: InvoiceUpload!): Transaction! @auth #TODO restrict access
+    "Handles invoice generations - inaccessible for unauthenticated users"
+    generateInvoice(invoice: GenerateInvoiceInput!): Transaction! @auth #TODO restrict access
   }
   type Success {
     status: Boolean!
@@ -32,7 +42,7 @@ module.exports = gql`
     zipCode: Int!
   }
 
-  type BankDetails {
+  type BankDetails { # need attention
     iban: String!
     bic: String
   }
@@ -58,6 +68,7 @@ module.exports = gql`
     expDate: String
     description: String
     file: String
+    "VAT rate"
     VAT: Int
     type: TransactionType!
     ref: String
@@ -72,6 +83,7 @@ module.exports = gql`
     name: String!
     email: String
     phone: String
+    "VAT number"
     VAT: String
     bankDetails: BankDetails
     address: Address
@@ -111,6 +123,7 @@ module.exports = gql`
     date: String
     description: String!
     receipt: Upload!
+    "VAT rate"
     VAT: Int
   }
 
@@ -121,6 +134,7 @@ module.exports = gql`
     company: CompanyInput
     expDate: String
     invoice: Upload!
+    "VAT rate"
     VAT: Int
   }
 
@@ -137,6 +151,8 @@ module.exports = gql`
   input GenerateInvoiceInput {
     company: CompanyInput!
     details: [GenerateInvoiceDetailsInput!]!
+    # add category
+    "VAT rate"
     VAT: Int!
   }
 
@@ -146,13 +162,20 @@ module.exports = gql`
   }
 
   #enums
+
+  "Transaction flow"
   enum Flow {
+    "Incoming transaction"
     IN
+    "Outgoing transaction"
     OUT
   }
 
+  "Transaction state"
   enum State {
+    "An unreviewed transaction"
     UNCLEARED
+    "An accepted transaction"
     CLEARED
     PAID
     REJECTED

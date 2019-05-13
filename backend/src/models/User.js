@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const address = require('./address');
 const bankDetails = require('./bankDetails');
 
-const HASH_FACTOR = process.env.HASH_FACTOR || 10;
+const HASH_FACTOR = parseInt(process.env.HASH_FACTOR, 10) || 10;
 
 const { Schema } = mongoose;
 

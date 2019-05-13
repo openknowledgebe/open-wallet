@@ -1,3 +1,6 @@
+/**
+ * Model that creates unique sequential ids.
+ */
 const mongoose = require('mongoose');
 
 const { Schema } = mongoose;

@@ -1,3 +1,8 @@
+/**
+ * This file gathers some reused validation rules using the indicative validation api.
+ * see doc: https://indicative.adonisjs.com/
+ */
+
 const MIN_PASSWORD_LENGTH = 8;
 const REQUIRED = fieldName => `${fieldName} is required.`;
 

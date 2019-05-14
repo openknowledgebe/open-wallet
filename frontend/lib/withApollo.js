@@ -1,3 +1,8 @@
+/**
+ * This file will configure an apollo client.
+ * inspiration: https://github.com/lfades/next-with-apollo/issues/13#issuecomment-390289449 + apollo client docs
+ */
+
 import ApolloClient from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
 import { createUploadLink } from 'apollo-upload-client';

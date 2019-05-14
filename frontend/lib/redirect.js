@@ -1,3 +1,6 @@
+/**
+ * https://github.com/zeit/next.js/blob/canary/examples/with-apollo-auth/lib/redirect.js
+ */
 import Router from 'next/router';
 
 export default (context, target) => {

@@ -4,5 +4,5 @@ const withImages = require('next-images');
 const withFonts = require('next-fonts');
 
 // Don't enable CSS modules
-// To prevent blueprint classes from being hashed
+// To prevent css classes from being hashed
 module.exports = withPlugins([[withCSS], [withFonts], [withImages]]);

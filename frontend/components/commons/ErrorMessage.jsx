@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React from 'react';
 import { Message, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
@@ -14,7 +15,7 @@ const ErrorMessage = ({ error }) => {
               required values.
             </p>
           )}
-          {error.graphQLErrors && error.graphQLErrors.map(err => <p>{err.message}</p>)}
+          {error.graphQLErrors && error.graphQLErrors.map((err, i) => <p key={i}>{err.message}</p>)}
         </Message.Content>
       )}
     </Message>

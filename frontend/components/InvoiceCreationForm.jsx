@@ -27,7 +27,11 @@ const CompanyDropdownStyle = styled.div`
 
 const Details = ({ details: { details, setDetail }, errors }) => {
   const addDetail = () => {
-    setDetail([...details, { id: details[details.length - 1].id + 1 }]);
+    let id = 0;
+    if (details.length) {
+      id = details[details.length - 1].id + 1;
+    }
+    setDetail([...details, { id }]);
   };
 
   const removeDetail = idx => {
@@ -437,7 +441,7 @@ FormManager.propTypes = {
 const Main = () => {
   return (
     <Query query={QUERY_COMPANIES}>
-      {({ data }) => <FormManager companies={data.companies} />}
+      {({ data, loading }) => !loading && <FormManager companies={data.companies} />}
     </Query>
   );
 };
